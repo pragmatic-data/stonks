@@ -10,15 +10,13 @@
     {# --- MANDATORY CONFIGS --- #}
     {%- set prj_name = var('project_short_name', 'STONKS') -%}
     {%- set environments = var('environments', ['DEV', 'QA', 'PROD']) -%}
-
-    {# --- Create the role to OWN the project resources --- #}
-    {%- set owner_role = var('owner_role', 'STONKS_SYSADMIN') -%}
-    {{ sf_project_admin.create_role( 
-            owner_role,
-            comment = 'Sysadmin like role that will own for the resources of the STONKS project.',
-            parent_role = 'SYSADMIN',
-            useradmin_role = 'USERADMIN'
-    ) }}    
+    {%- set owner_role = var('owner_role', 'STONKS_SYSADMIN') -%} {# --- Create the role to OWN the project resources or use an existing role, like SYSADMIN --- #}
+        {{ sf_project_admin.create_role( 
+                owner_role,
+                comment = 'Sysadmin like role that will own for the resources of the STONKS project.',
+                parent_role = 'SYSADMIN',
+                useradmin_role = 'USERADMIN'
+        ) }}    
 
     /* == Create ONE WAREHOUSE for ALL envs => pass NO env name or pass/set single_WH to true == */
     {{- sf_project_admin.create_warehouse(prj_name, single_WH = true) }}
