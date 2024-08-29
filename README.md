@@ -101,10 +101,17 @@ All these resources and roles are under the role that you have designated as OWN
 of the project resources and that has potentially been also created by the setup script.
 
 ### 3 - Creating the first users and granting them the project roles 
+In this step we need at minimum to set up the user that dbt will use to execute the code (in all environments, 
+with one specific writer role for each environment) and define the initial mappings
+of users to the other two default high level roles: developers and readers.
 
-// TODO - Better editing
-1. Duplicate XXXX
-2. Edit the role user mapping in YAML
+1.  To get a good head-start duplicate the `manage_users` macro from the SF Admin package
+    into your macro folder (we suggest placing it under a `aaa_setup` subfolder or something similar).
+    You can find it in `dbt_packages/sf_project_admin/integration_tests/macros/manage_users.sql`
+
+2.  Edit the role user mapping in YAML
+    - pick a name for the dbt executor user.
+      You can use an already existing user
 3. Edit the macro to decide what functionalities to enable
 
 // TODO - SF Admin package
