@@ -16,3 +16,7 @@
         get_STONKS_user_dictionary(), 
         useradmin_role
 )  }}
+------------
+{#{ sf_project_admin.drop_users(
+        get_STONKS_user_dictionary().users_to_delete, useradmin_role
+) }#}

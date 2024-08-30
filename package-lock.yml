@@ -2,5 +2,5 @@ packages:
   - package: dbt-labs/dbt_utils
     version: 1.1.1
   - git: https://RobMcZag:{{env_var('DBT_ENV_SECRET_SF_ADMIN_GITHUB_PAT')}}@github.com/RobMcZag/sf-admin.git
-    revision: b192270f2c3fb60ab9cb6f73765f4ea4b26175b4
+    revision: 8ed7e50eb8b77f09a1f8c73f5fc062d663787098
 sha1_hash: 683ede69af79cc8e7ae997c360e9dee6355559b8
