@@ -13,28 +13,27 @@
 dbt_executor: STONKS_DBT_EXECUTOR
 
 developers:
+ - ROBDBTZAG
  - ROBERTO_ZAGNI_ADMIN          # high privilege user for interactive access and to run the "Snowflake Admin" project 
  - ROBERTO_ZAGNI_DEVELOPER      # limited privilege user for normal project development tasks
- - USER@COMPANY.COM
- - NAME.SURNAME@COMPANY.COM
+# - USER@COMPANY.COM
+# - NAME.SURNAME@COMPANY.COM
 
 
 readers:
-  - POWERBI_READER
+ - STONKS_READER      # read only user to access to STONKS data
+#  - POWERBI_READER
 
-users_to_delete:
-  - SOME_USER_NAME_TO_DROP
+#users_to_delete:
+#  - SOME_USER_NAME_TO_DROP
 #  - OTHER_USER_NAME_TO_DROP
 
-SOME_ROLE:                      # An EXISTING role to be assigned to the list of users
- - ROBERTO_ZAGNI_DEVELOPER
+#SOME_ROLE:                      # An EXISTING role to be assigned to the list of users
+# - ROBERTO_ZAGNI_DEVELOPER
 
-AI_TEAM_ROLE:
- - AI_GUY@COMPANY.COM
- - AI_TEAM_SERVICE_USER
-
-FINANCE_TEAM_ROLE:
- - FINANCE_GUY@COMPANY.COM
+#AI_TEAM_ROLE:
+# - AI_GUY@COMPANY.COM
+# - AI_TEAM_SERVICE_USER
 
 {%- endset %}
 
