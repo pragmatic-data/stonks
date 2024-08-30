@@ -10,7 +10,8 @@
     {# --- MANDATORY CONFIGS --- #}
     {%- set prj_name = var('project_short_name', 'STONKS') -%}
     {%- set environments = var('environments', ['DEV', 'QA', 'PROD']) -%}
-    {%- set owner_role = var('owner_role', 'STONKS_SYSADMIN') -%} {# --- Create the role to OWN the project resources or use an existing role, like SYSADMIN --- #}
+    {%- set owner_role = var('owner_role', 'STONKS_SYSADMIN') -%}
+        {# --- IF it does not already exist, create the role to OWN the project resources or use an existing role, like SYSADMIN --- #}
         {{ sf_project_admin.create_role( 
                 owner_role,
                 comment = 'Sysadmin like role that will own for the resources of the STONKS project.',
