@@ -34,9 +34,11 @@ vars:
   # creator_role: SYSADMIN          
   # creator_role - the role used to create databases and warehouses - needs privilege to create the object  
 
-  owner_role: STONKS_SYSADMIN            
-  # owner_role - the role who will get ownership of the created object - no privileges needed 
-  #            - usually the EXECUTOR role for the dbt user, so that it can create schemata & other objects inside
+  owner_role: STONKS_SYSADMIN
+  # owner_role - the role who will get ownership of the created objects for the project and parent of the project roles
+  #            - by providing your own role for a project or project group you define a project scoped SYSADMIN
+  #            - that can granted to people in the DEV team, even if the full SYSADMIN cannot be granted,
+  #            - and can also be used for other administration tasks.
   
   single_WH: True
   # single_WH - Wheter to create and use a single WH for all environments, if true, or one for each environment, if false.
