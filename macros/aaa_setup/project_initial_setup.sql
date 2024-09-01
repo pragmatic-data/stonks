@@ -30,7 +30,7 @@
 
 
     /* == Setup ORGANIZATIONAL ROLES == */
-    {{ sf_project_admin.create_default_org_roles(prj_name, environments, owner_role, useradmin_role) }}
+    {{ sf_project_admin.setup_default_org_roles(prj_name, environments, owner_role, useradmin_role) }}
 
     /* == TO Create and Setup USERS => go to sample_prj__manage_users and run refresh_user_roles___XXXX_project()  == */
 

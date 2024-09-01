@@ -1,6 +1,9 @@
 {%- set prj_name = var('project_short_name', 'STONKS') -%}
 {%- set useradmin_role = var('useradmin_role', 'USERADMIN') -%}
 
+------------
+{{ project_initial_setup__sql() }}
+------------
 {#{ sf_project_admin.create_dbt_executor_user(
         prj_name = prj_name,
         user_name = get_STONKS_user_dictionary().dbt_executor,
