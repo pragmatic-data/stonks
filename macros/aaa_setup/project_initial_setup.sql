@@ -5,7 +5,7 @@
 {% endif %}{%- endmacro %}
 
 
-{% macro project_initial_setup__sql() -%}
+{% macro project_initial_setup__sql() -%}{% if execute and flags.WHICH in ('run', 'build', 'run-operation') %}
 
     {# --- MANDATORY CONFIGS --- #}
     {%- set prj_name = var('project_short_name', 'STONKS') -%}
@@ -34,4 +34,4 @@
 
     /* == TO Create and Setup USERS => go to sample_prj__manage_users and run refresh_user_roles___XXXX_project()  == */
 
-{%- endmacro %}
+{% endif %}{%- endmacro %}
