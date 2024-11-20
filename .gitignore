@@ -1,6 +1,7 @@
 # you shouldn't commit these into source control
 # these are the default directory names, adjust/add to fit your needs
 .venv/
+.vscode/
 dbt_packages/
 logs/
 target/
