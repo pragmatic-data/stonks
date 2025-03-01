@@ -5,7 +5,7 @@
 {% endif %}{%- endmacro %}
 
 
-{% macro project_initial_setup__sql() -%}{% if execute and flags.WHICH in ('run', 'build', 'run-operation') %}
+{% macro project_initial_setup__sql() -%}{% if execute and flags.WHICH in ('run', 'build', 'run-operation', 'compile') %}
 
     {# --- MANDATORY CONFIGS --- #}
     {%- set prj_name = var('project_short_name', 'STONKS') -%}
