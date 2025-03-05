@@ -44,8 +44,8 @@ readers:
 /* == Macro to run the user update as a dbt run-operation == */
 {% macro refresh_user_roles___STONKS_project() -%}{% if execute and flags.WHICH in ('run', 'build', 'run-operation') %}
     
-    {%- set prj_name = var('project_short_name', 'STONKS') -%}
-    {% set useradmin_role = var('useradmin_role', 'USERADMIN') %}
+    {%- set prj_name = var('project_short_name') -%}
+    {% set useradmin_role = var('useradmin_role') %}
     
     {% do log("Refreshing user roles for "~prj_name~" project ", info=True) %}
     {% do run_query( 
@@ -62,8 +62,8 @@ readers:
 /* == Macro to run the dbt user creation as a dbt run-operation IF you do not run the full user creation == */
 {% macro create_dbt_executor_user___STONKS_project() -%}{% if execute and flags.WHICH in ('run', 'build', 'run-operation') %}
     
-    {%- set prj_name = var('project_short_name', 'STONKS') -%}
-    {%- set useradmin_role = var('useradmin_role', 'USERADMIN') -%}
+    {%- set prj_name = var('project_short_name') -%}
+    {% set useradmin_role = var('useradmin_role') %}
 
     {% do log("Refreshing user roles for "~prj_name~" project ", info=True) %}
     /** CREATE dbt Executor User */ 
@@ -81,8 +81,8 @@ readers:
 /* == Macro to run the user update as a dbt run-operation == */
 {% macro create_users___STONKS_project() -%}{% if execute and flags.WHICH in ('run', 'build', 'run-operation') %}
     
-    {%- set prj_name = var('project_short_name', 'STONKS') -%}
-    {%- set useradmin_role = var('useradmin_role', 'USERADMIN') -%}
+    {%- set prj_name = var('project_short_name') -%}
+    {% set useradmin_role = var('useradmin_role') %}
 
     {% do log("Creating users for "~prj_name~" project ", info=True) %}
     /* Create users listed in the YAML definition */
@@ -98,8 +98,7 @@ readers:
 /* == Macro to run the user CREATION as a dbt run-operation == */
 {% macro drop_users___STONKS_project() -%}{% if execute and flags.WHICH in ('run', 'build', 'run-operation') %}
 
-    {%- set useradmin_role = var('useradmin_role', 'USERADMIN') -%}
-
+    {%- set useradmin_role = var('useradmin_role') -%}
     /* Drop users listed for deletion  */
     {% do log("Dropping users marked for deletion for "~prj_name~" project ", info=True) %}
     {% do run_query(

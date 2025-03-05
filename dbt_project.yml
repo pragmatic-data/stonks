@@ -28,7 +28,7 @@ vars:
   # environments        - The list of environment names in use in this project
 
 ### SF Admin VARIABLES - These override the default ones set in the package
-  # useradmin_role: USERADMIN       
+  useradmin_role: USERADMIN       
   # useradmin_role - the role used to create roles and users - needs privilege to create the object
 
   # creator_role: SYSADMIN          
