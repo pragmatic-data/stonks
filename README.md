@@ -19,7 +19,7 @@ Once you have all the pre-requisites in place, you can delve into creating the d
 To get started you need:
 
 - a Snowflake account.  
-  Any edition works, and you can create one for free going at snowflake.com
+  Any edition works, and you can create one for free going at http://snowflake.com
   - a Snowflake user with access to at least `SYSADMIN` and `USERADMIN` roles .  
       This is the bare minimum to be able to create the users, roles and DBs for your project.
   - a Snowflake user with access to `SECURITYADMIN` role is needed to provide future grants to reader roles.  
@@ -33,7 +33,7 @@ To get started you need:
   - create a new repository for this new dbt project
 
 - a dbt Cloud account where you can create a new project.  
-  You can create a free account at <https://www.getdbt.com/>
+  You can create a free account at https://www.getdbt.com/
 
 ### Creation of the dbt project
 
