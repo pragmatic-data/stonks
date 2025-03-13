@@ -31,7 +31,11 @@ vars:
   useradmin_role: USERADMIN       
   # useradmin_role - the role used to create roles and users - needs privilege to create the object
 
-  # creator_role: SYSADMIN          
+  future_grants_role: SECURITYADMIN
+  # future_grants_role - the role used to grant future usage and select for RO functional roles
+  #                    - these future grants are not granted if no future_grants_role is defined
+
+  creator_role: SYSADMIN          
   # creator_role - the role used to create databases and warehouses - needs privilege to create the object  
 
   owner_role: STONKS_SYSADMIN
