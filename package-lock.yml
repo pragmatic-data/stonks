@@ -1,6 +1,6 @@
 packages:
   - package: dbt-labs/dbt_utils
     version: 1.3.0
-  - git: https://RobMcZag:{{env_var('DBT_ENV_SECRET_SF_ADMIN_GITHUB_PAT')}}@github.com/pragmatic-data/sf-admin.git
-    revision: f1906f2b0f209a64a842898ddd05360d44541cb6
-sha1_hash: 7d58dbee95da0d2ba4ad72e80fc5801af1a88416
+  - git: https://github.com/pragmatic-data/sf-admin.git
+    revision: 853525a1878eff03b4ac5b16355abfa72d442735
+sha1_hash: 284efd3c570edcab3e6d047563f7b16abbef8302
