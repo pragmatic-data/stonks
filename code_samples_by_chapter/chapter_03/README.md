@@ -29,6 +29,9 @@ The following links are related to the contents of this Chapter.
 * Model specific configurations: 
   https://docs.getdbt.com/reference/model-configs
 
+* Using a Custom branch in development or deployment environemnts
+  https://docs.getdbt.com/faqs/Environments/custom-branch-settings
+
 ----
 ### &#169;  Copyright 2025 Roberto Zagni, Jakob Brandel.
    All right reserved.
