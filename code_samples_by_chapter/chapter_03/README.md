@@ -9,6 +9,13 @@ In this folder and its sub folders you find code samples related to the contents
 Under the `sample_project` folder you find the relevant files from the sample project 
 as discussed during this chapter and organized as if that folder was the project root folder.
 
+Notable contents of `code_samples_by_chapter/chapter_03/` folder:
+
+* sample_project/models/example__v1
+  In this folder there is the sample dbt project at its starting point.
+  You can use this at th ebeginning of the section `The release process` in chapter_03. 
+
+
 ## Useful links
 The following links are related to the contents of this Chapter.
 
