@@ -24,7 +24,8 @@ The following links are related to the contents of this Chapter.
   https://docs.getdbt.com/reference/dbt_project.yml
 
 * Custom schemas:  
-  https://docs.getdbt.com/docs/build/custom-schemas
+  https://docs.getdbt.com/docs/build/custom-schemas  
+  https://docs.getdbt.com/reference/resource-configs/schema
 
 * Model specific configurations: 
   https://docs.getdbt.com/reference/model-configs
@@ -32,6 +33,9 @@ The following links are related to the contents of this Chapter.
 * Using a Custom branch in development or deployment environemnts
   https://docs.getdbt.com/faqs/Environments/custom-branch-settings
 
+* Environemnts and Staging setup
+  https://docs.getdbt.com/docs/deploy/deploy-environments#staging-environment
+  
 ----
 ### &#169;  Copyright 2025 Roberto Zagni, Jakob Brandel.
    All right reserved.
