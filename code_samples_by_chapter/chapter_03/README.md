@@ -13,8 +13,10 @@ Notable contents of `code_samples_by_chapter/chapter_03/` folder:
 
 * sample_project/models/example__v1
   In this folder there is the sample dbt project at its starting point.
-  You can use this at th ebeginning of the section `The release process` in chapter_03. 
+  You can use this at the beginning of the section `The release process` in chapter_03. 
 
+* sample_project/dbt_project.yml
+  Changes in the macro-paths config.
 
 ## Useful links
 The following links are related to the contents of this Chapter.
@@ -36,6 +38,16 @@ The following links are related to the contents of this Chapter.
 * Environemnts and Staging setup
   https://docs.getdbt.com/docs/deploy/deploy-environments#staging-environment
   
+* Ref() and relation object
+  -	https://docs.getdbt.com/reference/dbt-jinja-functions/ref
+  -	https://docs.getdbt.com/reference/dbt-classes#relation
+
+* Node selection syntax
+  https://docs.getdbt.com/reference/node-selection/syntax
+
+* Run-operation
+  https://docs.getdbt.com/reference/commands/run-operation
+
 ----
 ### &#169;  Copyright 2025 Roberto Zagni, Jakob Brandel.
    All right reserved.
