@@ -1,0 +1,7 @@
+groups:
+
+  - name: example_TEST
+    owner:      
+      # 'name' or 'email' is required;
+      name: Roberto Zagni
+      email: info@pragmatic-data.org
