@@ -57,7 +57,7 @@ vars:
   # initial_pw - The initial password to assign to users when created. 
   #            - While it MUST be changed after the user creation, it better come from ENV vars and not the string here.
 
-  shared_dev_wh: COMPUTE_WH
+  # shared_dev_wh: COMPUTE_WH
   # shared_dev_wh - the shared development warehouse to assign to developers in addition to the project warehouse
   #                 The idea is that it is more cost efficient for many developers to share a single DEV WH
   #                 than each DEV using the specific WH for the project she's working on at the moment.
