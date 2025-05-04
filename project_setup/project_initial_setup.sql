@@ -30,7 +30,7 @@
     /* == Create ALL environments, one at a time == */
     {%- for env_name in environments %}
         {{ sf_project_admin.create_environment(prj_name, env_name, owner_role, creator_role, useradmin_role, 'SECURITYADMIN', single_WH = true) }}
-        {{ sf_project_admin.grant_shared_wh_to_writer_role(prj_name, env_name, owner_role = 'SYSADMIN' )}}        
+        {#{ sf_project_admin.grant_shared_wh_to_writer_role(prj_name, env_name, owner_role = 'SYSADMIN' )}#}
     {%- endfor %}
 
 
