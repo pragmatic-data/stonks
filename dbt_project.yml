@@ -11,7 +11,7 @@ model-paths: ["models"]
 analysis-paths: ["analyses"]
 test-paths: ["tests"]
 seed-paths: ["seeds"]
-macro-paths: ["macros", "project_setup", "migrations"]
+macro-paths: ["macros", "project_setup", "migrations", "ingestion"]
 snapshot-paths: ["snapshots"]
 
 target-path: "target"  # directory which will store compiled SQL files

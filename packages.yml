@@ -9,9 +9,10 @@ packages:
     warn-unpinned: false
 
   # Pragmatic Data Platform package
-  # - git: "https://github.com/RobMcZag/pragmatic-data-platform.git"
-  #   revision: main
-  #   warn-unpinned: false
+  - git: https://github.com/pragmatic-data/pragmatic-data-platform.git
+    revision: 0.4.6
+
+
   # Pragmatic Data Platform - Snowflake Admin package
   # - git: "https://RobMcZag:{{env_var('DBT_ENV_SECRET_SF_ADMIN_GITHUB_PAT')}}@github.com/pragmatic-data/sf-admin.git"
   #   revision: main
