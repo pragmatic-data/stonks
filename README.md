@@ -148,7 +148,7 @@ To install the SF Admin package in your project the file should contain the foll
 ```yaml
     packages:        
         # Pragmatic Data Platform - Snowflake Admin package
-        - git: "https://github.com/RobMcZag/sf-admin.git"
+        - git: "https://github.com/pragmatic-data/sf-admin.git"
             revision: main
 ```
 
