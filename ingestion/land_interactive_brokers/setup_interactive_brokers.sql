@@ -8,14 +8,14 @@ landing:
 file_format:
     name: IB_CSV__FF
     definition:
-    TYPE: "'CSV'"
-    FIELD_DELIMITER: "','"
-    FIELD_OPTIONALLY_ENCLOSED_BY: "'\\042'"      #-- '\042' double quote
-    COMPRESSION: "'AUTO'"
-    ERROR_ON_COLUMN_COUNT_MISMATCH: TRUE
-    EMPTY_FIELD_AS_NULL: TRUE
-    NULL_IF: ('', '\\N')
-    #-- SKIP_HEADER: 1              #-- Set to 0 when we have more than one in each file
+        TYPE: "'CSV'"
+        FIELD_DELIMITER: "','"
+        FIELD_OPTIONALLY_ENCLOSED_BY: "'\\042'"      #-- '\042' double quote
+        COMPRESSION: "'AUTO'"
+        ERROR_ON_COLUMN_COUNT_MISMATCH: TRUE
+        EMPTY_FIELD_AS_NULL: TRUE
+        NULL_IF: ('', '\\N')
+        #-- SKIP_HEADER: 1              #-- Set to 0 when we have more than one in each file
         #-- ENCODING: "'ISO-8859-1'"    #-- For nordic languages
 
 stage:
