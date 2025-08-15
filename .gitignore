@@ -7,3 +7,6 @@ logs/
 target/
 
 package-lock.yml
+
+!sample_IB_files.zip    # do not ignore the zip
+sample_IB_files/        # ignore the unzipped files
