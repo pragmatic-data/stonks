@@ -72,10 +72,3 @@ models:
     example:
       +materialized: view
       +schema: EXAMPLE
-
-    example_TEST:
-      +materialized: view
-      +schema: EXAMPLE_TEST
-      +enabled: "{{ true if target.name == 'dev' else false }}"
-      +group: EXAMPLE_TEST
-      +access: private

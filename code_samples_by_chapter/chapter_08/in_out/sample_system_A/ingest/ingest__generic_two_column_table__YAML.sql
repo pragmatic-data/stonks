@@ -1,6 +1,6 @@
 {% macro ingest__generic_two_column_table__YAML(recreate_table = false) %}
 
-{%- set yaml_str -%}
+{%- set ingestion_cfg -%}
 ingestion:
     pattern: 'SYSTEM_A/generic/.*/GENERIC_TWO_COLUMN_TABLE.*.csv.gz'
     stage_name: "{{ get_SYSTEM_A_inout_stage_name() }}"     # -- "PDP_TEST.LAND_SYSTEM_A.SYSTEM_A__STAGE"
@@ -19,11 +19,11 @@ landing_table:
 
 {%- endset -%}
 
-{%- set metadata_dict = fromyaml(yaml_str) -%}
+{%- set cfg = fromyaml(ingestion_cfg) -%}
 
 {% do pragmatic_data.run_CSV_ingestion(
-        landing_table_dict = metadata_dict['landing_table'],
-        ingestion_dict  = metadata_dict['ingestion'],
+        landing_table_dict = cfg['landing_table'],
+        ingestion_dict  = cfg['ingestion'],
         recreate_table = recreate_table
 ) %}
 
