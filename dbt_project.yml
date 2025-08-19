@@ -72,3 +72,11 @@ models:
     example:
       +materialized: view
       +schema: EXAMPLE
+
+seeds:
+  stonks:
+    +schema: seeds
+    +post-hook:
+      - "ALTER TABLE {{ this }} ADD COLUMN IF NOT EXISTS ingestion_ts_utc timestamp"
+      - "UPDATE {{ this }} SET ingestion_ts_utc = '{{ run_started_at }}' WHERE ingestion_ts_utc is null"
+
