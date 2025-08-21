@@ -12,6 +12,21 @@ sources:
     loaded_at_field: TRY_TO_TIMESTAMP(REPORTDATE)      # INGESTION_TS_UTC
 
     tables: 
+      - name: TRADES
+        description: Trades on Interactive Brokers accounts
+        columns:
+          - name: CLIENTACCOUNTID
+            description: The unique ID of a client account.
+            data_tests:
+              - not_null
+          - name: FROM_FILE
+            data_tests:
+              - not_null
+              - pragmatic_data.all_files_from_stage:
+                  pattern: 'Trades/.*Trades.*[.]csv.gz'
+                  stage_name: "{{ get_IB_ingestion_stage_name() }}"
+              - pragmatic_data.file_order_is_correct
+
       - name: OPEN_POSITIONS
         description: Open Positions on Interactive Brokers accounts
         columns:
@@ -39,21 +54,6 @@ sources:
               - not_null
               - pragmatic_data.all_files_from_stage:
                   pattern: 'CashTransactions/.*CashTransactions.*[.]csv.gz'
-                  stage_name: "{{ get_IB_ingestion_stage_name() }}"
-              - pragmatic_data.file_order_is_correct
-
-      - name: TRADES
-        description: Trades on Interactive Brokers accounts
-        columns:
-          - name: CLIENTACCOUNTID
-            description: The unique ID of a client account.
-            data_tests:
-              - not_null
-          - name: FROM_FILE
-            data_tests:
-              - not_null
-              - pragmatic_data.all_files_from_stage:
-                  pattern: 'Trades/.*Trades.*[.]csv.gz'
                   stage_name: "{{ get_IB_ingestion_stage_name() }}"
               - pragmatic_data.file_order_is_correct
 

@@ -17,9 +17,9 @@ calculated_columns:
 SELECT 
     '    - ' || COLUMN_NAME || ': '|| COLUMN_NAME || ' -- ' || DATA_TYPE as calculated_columns_text_with_types
 --    '    - ' || COLUMN_NAME || ': '|| COLUMN_NAME as calculated_columns_text
---    '    - ' || COLUMN_NAME  as hdiff_text (better if run on the first version of the STG model, instead of the LT)
+--    '- ' || COLUMN_NAME  as hdiff_text (better if run on the first version of the STG model, instead of the LT)
 
 FROM {{model.database}}.INFORMATION_SCHEMA.COLUMNS
-WHERE TABLE_SCHEMA = '{{model.schema}}'
- and TABLE_NAME = '{{model.identifier}}'
+WHERE TABLE_SCHEMA = '{{model.schema | upper}}'
+ and TABLE_NAME = '{{model.identifier | upper}}'
 ORDER BY ORDINAL_POSITION

@@ -4,11 +4,12 @@
     model: "{{ source('source', 'TABLE_NAME') }}"     #-- model from a source declared in this project
 */ #} 
 
+{{ config( enabled=false) }}    -- !!! Remove this LINE to enable the model. Model disabled to avoid compilation errors
 
-{# The model to read from, fully qualified name. See above for how to produce it correctly.
-{%- set source_model = source('SYSTEM_ABC', 'TABLE_ONE') %} #}  -- uncomment for use. Commented to avoid compile error.
+{# The model to read from, fully qualified name. See above for how to produce it correctly. #}
+{%- set source_model = source('SYSTEM_ABC', 'TABLE_ONE') %} 
 
-{%- set yaml_str -%}
+{%- set configuration -%}
 source:
     columns: 
         include_all: true       #-- True enables using eclude / replace / rename lists // false does not include any source col
@@ -79,11 +80,11 @@ remove_duplicates:
 {%- endset -%}
 
 
-{%- set metadata_dict = fromyaml(yaml_str) -%}
+{%- set cfg = fromyaml(configuration) -%}
 
 {{- stage(
-    source                  = metadata_dict['source'],
-    calculated_columns      = metadata_dict['calculated_columns'],
-    hashed_columns          = metadata_dict['hashed_columns'],
-    remove_duplicates       = metadata_dict['remove_duplicates'],
+    source                  = cfg['source'],
+    calculated_columns      = cfg['calculated_columns'],
+    hashed_columns          = cfg['hashed_columns'],
+    remove_duplicates       = cfg['remove_duplicates'],
 ) }}
