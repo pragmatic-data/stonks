@@ -15,6 +15,10 @@ sources:
       - name: TRADES
         description: Trades on Interactive Brokers accounts
         columns:
+          - name: Transaction_ID
+            description: The unique ID of a Trade.
+            data_tests:
+              - not_null
           - name: CLIENTACCOUNTID
             description: The unique ID of a client account.
             data_tests:
