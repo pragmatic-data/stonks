@@ -6,13 +6,13 @@
 
 {{ config( enabled=false) }}    -- !!! Remove this LINE to enable the model. Model disabled to avoid compilation errors
 
-{# The model to read from, fully qualified name. See above for how to produce it correctly. #}
+{# The model to read from, using a ref() or source() function. See above for how to produce it correctly. #}
 {%- set source_model = source('SYSTEM_ABC', 'TABLE_ONE') %} 
 
 {%- set configuration -%}
 source:
     columns: 
-        include_all: true       #-- True enables using eclude / replace / rename lists // false does not include any source col
+        include_all: true       #-- True enables using eclude / replace / rename lists // false does not include the * operator
         exclude_columns:        #-- A simple list of columns to exclude
             - e1
             - e2
