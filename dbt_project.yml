@@ -64,14 +64,21 @@ vars:
 
   # reporting_wh: REPORTING_WH
   # reporting_wh - an example of extra warehouse
+  
+  ## Variables to re-define the VALID_TO value and type for current rows
+  # pdp.end_of_time: 9999-12-31   # PDP default is 9999-09-09
+  # pdp.end_of_time_type: DATE    # could be timestamp
 
 
 # Configuring models
 models:
   stonks:
+    01_storage:
+      interactive_brokers:
+        +materialized: view
+        +schema: storage_ib
+        
     example:
-      +materialized: view
-      +schema: EXAMPLE
 
 seeds:
   stonks:
