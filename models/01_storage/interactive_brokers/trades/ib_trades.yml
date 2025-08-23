@@ -76,6 +76,7 @@ models:
       - name: SECURITY_CODE
         description: Mandatory FK is not null
         data_tests:
+          - not_null
           - relationships:
               to: ref('HIST_IB_TRADES_SECURITY')
               field: SECURITY_CODE
@@ -99,4 +100,12 @@ models:
           - not_null
           - unique:
               where: IS_CURRENT
+      - name: SECURITY_CODE
+        description: Mandatory FK is not null
+        data_tests:
+          - not_null
+          - relationships:
+              to: ref('VER_IB_TRADES_SECURITY')
+              field: SECURITY_CODE
+              where: ASSET_CLASS not in ('CASH', 'FOP') and trade_date_time >= '2024-01-01'
 

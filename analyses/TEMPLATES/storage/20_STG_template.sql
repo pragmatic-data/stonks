@@ -82,7 +82,8 @@ remove_duplicates:
 
 {%- set cfg = fromyaml(configuration) -%}
 
-{{- stage(
+{{- pragmatic_data.stage(
+    source_model            = source_model,
     source                  = cfg['source'],
     calculated_columns      = cfg['calculated_columns'],
     hashed_columns          = cfg['hashed_columns'],

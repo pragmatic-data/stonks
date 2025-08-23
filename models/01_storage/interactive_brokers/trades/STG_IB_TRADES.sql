@@ -1,5 +1,5 @@
 {%- set source_model = source('IB', 'TRADES') %}
-{%- set yaml_str -%}
+{%- set configuration -%}
 source:
     columns: 
         include_all: false          #-- True enables using exclude / replace / rename lists // false does not include any source col
@@ -139,12 +139,12 @@ hashed_columns:
 remove_duplicates: 
 {%- endset -%}
 
-{%- set metadata_dict = fromyaml(yaml_str) -%}
+{%- set cfg = fromyaml(configuration) -%}
 
-{{ pragmatic_data.stage(
+{{- pragmatic_data.stage(
     source_model            = source_model,
-    source                  = metadata_dict['source'],
-    calculated_columns      = metadata_dict['calculated_columns'],
-    hashed_columns          = metadata_dict['hashed_columns'],
-    remove_duplicates       = metadata_dict['remove_duplicates'],
+    source                  = cfg['source'],
+    calculated_columns      = cfg['calculated_columns'],
+    hashed_columns          = cfg['hashed_columns'],
+    remove_duplicates       = cfg['remove_duplicates'],
 ) }}
