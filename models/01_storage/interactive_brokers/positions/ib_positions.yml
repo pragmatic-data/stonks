@@ -1,0 +1,130 @@
+# In this file we document the models about POSITIONS on Interactive Brokers
+# The main concepts are:
+#  - OPEN POSITIONS - the position data as we get it from the IB reports, only open positions
+#  - CLOSED POSITIONS - the positions with zeroed out values, once they are closed 
+#  - (ALL) POSITIONS (ACCOUNT_POSITIONS) - the positions in the account, with correct open and closed states.
+#
+
+version: 2
+
+models:
+
+  - name: STG_IB_OPEN_POSITIONS
+    description: |
+      Positions in portfolios held on Interactive Broker as returned by IB exported reports.
+      This model tracks the changes in the positions and cost basis, not in their current value.
+
+      This model does not have closed positions, but only the open positions from the IB open position reports.
+      This model DOES NO correctly represents the situation in a portfolio.
+    data_tests:
+      - dbt_utils.unique_combination_of_columns:          #-- MAX 1 EXACT version x eff date
+          combination_of_columns:
+            - POSITION_HKEY
+            - POSITION_HDIFF
+            - EFFECTIVITY_DATE
+      # - pragmatic_data.has_sortable_versions:        #-- MAX 1 DISTINCT version in STG (HIST input) x eff date
+      #     key_column: POSITION_HKEY
+      #     diff_column: POSITION_HDIFF
+      #     sort_columns: EFFECTIVITY_DATE
+      #     multiple_equal_versions_is_ok: true   # When true we check for distinct versions, when false exact versions (rows)
+    columns:
+      - name: POSITION_HKEY
+        description: HKEY / PK is not null
+        data_tests:
+          - not_null
+      - name: concat(CLIENT_ACCOUNT_CODE, BROKER_CODE, LISTING_EXCHANGE, SECURITY_CODE)
+        description: BK is not null
+        data_tests:
+          - not_null
+      - name: SECURITY_SYMBOL
+        data_tests:
+          - not_null
+      - name: EFFECTIVITY_DATE
+        data_tests:
+          - not_null
+
+
+  - name: STG_IB_CLOSED_POSITIONS
+    description: |
+      Closed positions in portfolios held on Interactive Broker.
+      This model calculates the closed positions from the open ones in the RAW_POSITIONS.
+      
+      The calculation is similar to detecting deletions: when we have a newer report without a position
+      we consider the position closed and put the values for it to zero with the date of the next report.
+    data_tests:
+      - dbt_utils.unique_combination_of_columns:          #-- MAX 1 EXACT version x eff date
+          combination_of_columns:
+            - POSITION_HKEY
+            - POSITION_HDIFF
+            - EFFECTIVITY_DATE
+
+  - name: STG_IB_ALL_POSITIONS
+    description: |
+      Open and closed positions in portfolios held on Interactive Broker.
+      This model has only the positions and cost basis info, not in their current value.
+      
+      This model unions the closed positions to the open ones.
+      This model therefore correctly represents the positions in a portfolio.
+
+      There is one line in this STG model for each report that we have in the Landing Table
+      where the positon was open plus one line when a position is closed.
+      
+      We do not need to load all reports (from CSV) in the LT to correctly identify changed or closed positions, 
+      but the more reports we have the more precisely we identify when a position changed or was closed.
+
+    data_tests:
+      - dbt_utils.unique_combination_of_columns:          #-- MAX 1 EXACT version x eff date
+          combination_of_columns:
+            - POSITION_HKEY
+            - POSITION_HDIFF
+            - EFFECTIVITY_DATE
+
+
+  - name: HIST_IB_ALL_POSITIONS
+    description: | 
+      Open and closed positions in portfolios held on Interactive Broker.
+      This table tracks the changes in the positions and cost basis, not in their current value.
+
+      This HIST table has one line for each change in the position, including its closure.      
+    data_tests:
+      - pragmatic_data.keys_from_landing:
+          landing_rel: "{{ source('IB', 'OPEN_POSITIONS') }}"
+          landing_rel_filter: STARTSWITH(CLIENTACCOUNTID, 'U')
+          key_fields_landing: RIGHT(CLIENTACCOUNTID, 4), LISTINGEXCHANGE, coalesce(SECURITYID, CONID)
+          key_fields_hist: RIGHT(CLIENT_ACCOUNT_CODE, 4), LISTING_EXCHANGE, SECURITY_CODE
+      - dbt_utils.unique_combination_of_columns:
+          combination_of_columns:
+            - CLIENT_ACCOUNT_CODE
+            - BROKER_CODE
+            - LISTING_EXCHANGE
+            - SECURITY_CODE
+            - EFFECTIVITY_DATE
+      - dbt_utils.unique_combination_of_columns:
+          combination_of_columns:
+            - POSITION_HKEY
+            - EFFECTIVITY_DATE
+    columns:
+      - name: POSITION_HKEY
+        description: HKEY / PK is not null
+        data_tests:
+          - not_null          
+      - name: concat(CLIENT_ACCOUNT_CODE, BROKER_CODE, LISTING_EXCHANGE, SECURITY_CODE)
+        description: BK is not null
+        data_tests:
+          - not_null
+      - name: SECURITY_SYMBOL
+        data_tests:
+          - not_null
+      - name: SECURITY_HKEY
+        description: Mandatory FK is not null
+        data_tests:
+          - relationships:
+              to: ref('HIST_IB_OPEN_POSITIONS_SECURITY')
+              field: SECURITY_HKEY
+
+  - name: VER_IB_ALL_POSITIONS
+    description: |
+      This VER model adds the versioning info and validity time ranges to the HIST model.
+      
+      There is one row for each (reported) date when a change in a position is recognized
+      and one row when a position has been closed, with the correct validity.

@@ -1,7 +1,7 @@
 {% macro load_IB_Transfers(recreate_table = false) %}
 {%- set ingestion_cfg -%}
 ingestion:
-    pattern: 'Transfers/Transfers.*[.]csv'
+    pattern: 'transfers/Transfers.*[.]csv.gz'
     stage_name: "{{ get_IB_ingestion_stage_name() }}"
     format_name:
 

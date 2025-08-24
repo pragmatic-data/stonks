@@ -1,0 +1,66 @@
+version: 2
+
+models:
+
+  - name: STG_IB_CORP_ACT_MANUAL
+    description: |
+      Manually entered Corporate Actions in portfolios hold on Interactive Broker.
+      
+    data_tests:
+      - pragmatic_data.has_sortable_versions:        #-- MAX 1 DISTINCT version in STG (HIST input) x eff date
+          key_column: CORP_ACT_HKEY
+          diff_column: CORP_ACT_HDIFF
+          sort_columns: EFFECTIVITY_DATE
+      - dbt_utils.unique_combination_of_columns:      #-- Max one version per report
+          combination_of_columns:
+            - BROKER_CODE
+            - CLIENT_ACCOUNT_CODE
+            - SECURITY_CODE
+            - LISTING_EXCHANGE
+            - CORP_ACT_DATE
+
+    columns:
+      - name: CORP_ACT_HKEY
+        description: HKEY / PK is not null
+        data_tests:
+          - not_null
+      - name: TRANSACTION_ID
+        description: BK is not null
+        data_tests:
+          - not_null
+      - name: concat(BROKER_CODE, CLIENT_ACCOUNT_CODE, SECURITY_CODE, LISTING_EXCHANGE, CORP_ACT_DATE)
+        description: BK is not null
+        data_tests:
+          - not_null
+      - name: SECURITY_CODE
+        data_tests:
+          - relationships:
+              to: ref('STG_IB_CORP_ACT_SECURITY')
+              field: SECURITY_CODE
+
+
+  - name: HIST_IB_CORP_ACT_MANUAL
+    description: Cash Transactions in portfolios hold on Interactive Broker.
+    data_tests:
+      - pragmatic_data.keys_from_landing:
+          landing_rel: ref('ib_corp_act_manual')
+          key_fields_landing: concat_ws('|', BROKER_CODE,CLIENT_ACCOUNT_CODE,SECURITY_CODE,LISTING_EXCHANGE,CORP_ACT_DATE)
+          key_fields_hist: Transaction_ID
+
+    columns:
+      - name: CORP_ACT_HKEY
+        description: HKEY / PK is not null
+        data_tests:
+          - not_null
+          - unique    # This checks that the TX have no versions = are immutable
+      - name: Transaction_ID
+        description: BK is not null
+        data_tests:
+          - not_null
+          - unique
+      - name: SECURITY_CODE
+        description: Mandatory FK is not null
+        data_tests:
+          - relationships:
+              to: ref('HIST_IB_CORP_ACT_SECURITY')
+              field: SECURITY_CODE
