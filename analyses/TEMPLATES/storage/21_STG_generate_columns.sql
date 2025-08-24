@@ -12,7 +12,7 @@ calculated_columns:
   */
 
 {#%- set model = ref('dbt_project', 'TABLE_NAME') %#}   -- ref to access another dbt model, eventually with dbt mesh in another project.
-{%- set model = source('IB', 'TRADES') %}               -- source to access a table not being a dbt model (LTs are not dbt models!)
+{#%- set model = source('IB', 'TRADES') %#}               -- source to access a table not being a dbt model (LTs are not dbt models!)
 
 SELECT 
     '    - ' || COLUMN_NAME || ': '|| COLUMN_NAME || ' -- ' || DATA_TYPE as calculated_columns_text_with_types
