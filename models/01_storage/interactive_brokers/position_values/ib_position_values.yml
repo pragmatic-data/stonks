@@ -1,0 +1,124 @@
+# In this file we document the models about POSITION VALUES on Interactive Brokers
+# The main concepts are:
+#  - OPEN POSITIONS - the position data as we get it from the IB reports, only open positions
+#  - CLOSED POSITIONS - the positions with zeroed out values, once they are closed 
+#  - (ALL) POSITIONS (ACCOUNT_POSITIONS) - the positions in the account, with correct open and closed states.
+#
+
+version: 2
+
+models:
+
+  - name: STG_IB_OPEN_POSITIONS_DAILY_VALUES
+    description: |
+      Daily data about OPEN positions held on Interactive Broker.
+      This model tracks only the columns expected to change daily in the positions, mostly related position value.      
+
+      This model has one row for each position that was open on the date of the report; anyway it does not have values 
+      for all dates, but only for the ones where open positions reports are generated (exchange trading dates).
+      This model does not have closed positions, but only the open positions from the IB open position reports.
+      This model DOES NO correctly represents the situation in a portfolio.
+
+    data_tests:
+      - dbt_utils.unique_combination_of_columns:          #-- MAX 1 EXACT version x eff date
+          combination_of_columns:
+            - POSITION_HKEY
+            - POSITION_DAILY_HDIFF
+            - EFFECTIVITY_DATE
+    columns:
+      - name: POSITION_HKEY
+        description: HKEY / PK is not null
+        data_tests:
+          - not_null
+      - name: concat(CLIENT_ACCOUNT_CODE, BROKER_CODE, LISTING_EXCHANGE, SECURITY_CODE)
+        description: BK is not null
+        data_tests:
+          - not_null
+      - name: SECURITY_SYMBOL
+        data_tests:
+          - not_null
+      - name: EFFECTIVITY_DATE
+        data_tests:
+          - not_null
+
+  - name: STG_IB_ALL_POSITIONS_DAILY_VALUES
+    description: |
+      Daily data about OPEN and CLOSED positions held on Interactive Broker.
+      
+      This model adds one row with zeroed values for each closed position to all the rows 
+      from the OPEN positions (STG_IB_OPEN_POSITIONS_DAILY_VALUES).
+      This model is therefore fit to represent the daily values of positions from opening to close.
+    data_tests:
+      - dbt_utils.unique_combination_of_columns:          #-- MAX 1 version x eff date
+          combination_of_columns:
+            - POSITION_HKEY
+            - POSITION_DAILY_HDIFF
+            - EFFECTIVITY_DATE
+    columns:
+      - name: POSITION_HKEY
+        description: HKEY / PK is not null
+        data_tests:
+          - not_null
+      - name: concat(CLIENT_ACCOUNT_CODE, BROKER_CODE, LISTING_EXCHANGE, SECURITY_CODE)
+        description: BK is not null, mandatory FKs are not null
+        data_tests:
+          - not_null
+      - name: SECURITY_SYMBOL
+        data_tests:
+          - not_null
+      - name: EFFECTIVITY_DATE
+        data_tests:
+          - not_null
+
+  - name: HIST_IB_ALL_POSITIONS_DAILY_VALUES
+    description: |
+      This HIST table stores the daily values of all the positions ever held on Interactive Brokers.
+      
+      This model has one row for each date a position was open and we loaded the IB position report,
+      plus one row for the date when we identify the position closing.
+      
+      This means that there is not one entry for each date when a position was open, 
+      because -as an example- there are no position reports for the weekends as there is no trading.
+
+    data_tests:
+      - pragmatic_data.keys_from_landing:
+          landing_rel: "{{ source('IB', 'OPEN_POSITIONS') }}"
+          landing_rel_filter: STARTSWITH(CLIENTACCOUNTID, 'U')
+          key_fields_landing: RIGHT(CLIENTACCOUNTID, 4), LISTINGEXCHANGE
+          key_fields_hist: RIGHT(CLIENT_ACCOUNT_CODE, 4), LISTING_EXCHANGE
+      - dbt_utils.unique_combination_of_columns:
+          combination_of_columns:
+            - CLIENT_ACCOUNT_CODE
+            - BROKER_CODE
+            - LISTING_EXCHANGE
+            - SECURITY_CODE
+            - EFFECTIVITY_DATE
+            - INGESTION_TS_UTC
+      - dbt_utils.unique_combination_of_columns:
+          combination_of_columns:
+            - POSITION_HKEY
+            - EFFECTIVITY_DATE
+    columns:
+      - name: POSITION_HKEY
+        description: HKEY / PK is not null
+        data_tests:
+          - not_null          
+      - name: concat(CLIENT_ACCOUNT_CODE, BROKER_CODE, LISTING_EXCHANGE, SECURITY_CODE)
+        description: BK is not null
+        data_tests:
+          - not_null
+      - name: SECURITY_HKEY
+        description: Mandatory FK is not null
+        data_tests:
+          - relationships:
+              to: ref('HIST_IB_OPEN_POSITIONS_SECURITY')
+              field: SECURITY_HKEY
+
+  - name: VER_IB_ALL_POSITIONS_DAILY_VALUES
+    description: |
+      This VER model adds the versioning info and validity time ranges to the HIST model
+      for POSITION_DAILY_VALUES. 
+      
+      There is one row for each reported date when the position was open and one row when 
+      the position has been closed, with the correct validity.
+
