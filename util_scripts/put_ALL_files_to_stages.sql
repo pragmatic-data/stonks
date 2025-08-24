@@ -16,3 +16,8 @@ PUT 'file:///Users/robertozagni/Downloads/ingestion_base/Trades/*Trades*.csv'
     AUTO_COMPRESS = TRUE
     OVERWRITE = FALSE
 ;
+PUT 'file:///Users/robertozagni/Downloads/ingestion_base/Transfers/Transfers*.csv'
+    @STONKS_DEV.LAND_IB.IB_CSV__STAGE/transfers/
+    AUTO_COMPRESS = TRUE
+    OVERWRITE = FALSE
+;
