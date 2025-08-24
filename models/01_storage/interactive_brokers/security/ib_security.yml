@@ -183,8 +183,8 @@ models:
   - name: HIST_IB_OPEN_POSITIONS_SECURITY
     columns: *security_hist_column_tests
     data_tests:
-      - keys_from_landing:
-          landing_rel: "{{ source('IB', 'OPEN_POSITIONS') }}"
+      - pragmatic_data.keys_from_landing:
+          landing_rel: source('IB', 'OPEN_POSITIONS')
           landing_rel_filter: " LISTINGEXCHANGE != 'ListingExchange' "
           key_fields_landing: LISTINGEXCHANGE, coalesce(SECURITYID, CONID)
           key_fields_hist: LISTING_EXCHANGE, SECURITY_CODE
@@ -193,18 +193,17 @@ models:
 
   - name: STG_IB_TRADES_SECURITY
     config:
-      flattened_calculated_columns: 
-        <<: *security_calculated_columns
+      calculated_columns: *security_calculated_columns
       default_records:    *security_default_records
       hashed_columns:     *security_hashed_columns
-      remove_duplicates: 
+      remove_duplicates:
     columns: *security_stg_column_tests
 
   - name: HIST_IB_TRADES_SECURITY
     columns: *security_hist_column_tests
     data_tests:
-      - keys_from_landing:
-          landing_rel: "{{ source('IB', 'TRADES') }}"
+      - pragmatic_data.keys_from_landing:
+          landing_rel: source('IB', 'TRADES')
           landing_rel_filter: " LISTINGEXCHANGE != 'ListingExchange' "
           key_fields_landing: LISTINGEXCHANGE, coalesce(SECURITYID, CONID)
           key_fields_hist: LISTING_EXCHANGE, SECURITY_CODE
@@ -223,8 +222,8 @@ models:
   - name: HIST_IB_TRANSFERS_SECURITY
     columns: *security_hist_column_tests
     data_tests:
-      - keys_from_landing:
-          landing_rel: "{{ source('IB', 'TRANSFERS') }}"
+      - pragmatic_data.keys_from_landing:
+          landing_rel: source('IB', 'TRANSFERS')
           landing_rel_filter: " LISTINGEXCHANGE != 'ListingExchange' "
           key_fields_landing: LISTINGEXCHANGE, coalesce(SECURITYID, CONID)
           key_fields_hist: LISTING_EXCHANGE, SECURITY_CODE
@@ -243,8 +242,8 @@ models:
   - name: HIST_IB_CORP_ACT_SECURITY
     columns: *security_hist_column_tests
     data_tests:
-      - keys_from_landing:
-          landing_rel: "ref('ib_corp_act_manual')"
+      - pragmatic_data.keys_from_landing:
+          landing_rel: ref('ib_corp_act_manual')
           landing_rel_filter: ASSET_CLASS = 'STK'
           key_fields_landing: LISTING_EXCHANGE, SECURITY_CODE
           key_fields_hist: LISTING_EXCHANGE, SECURITY_CODE
