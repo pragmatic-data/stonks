@@ -1,3 +1,6 @@
+# NOTE: This file has a .txt extension to avoid running tests on non -existing sources.
+#       In your project the sources MUST be in a .yml file.
+
 version: 2
 
 sources:
