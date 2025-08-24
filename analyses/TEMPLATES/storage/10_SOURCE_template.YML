@@ -7,6 +7,8 @@ sources:
     schema: LANDING_TABLE_SCHEMA  # the schema where you find the sources for this system 
     loader: Pragmatic Data Platform Ingestion
 
+    enabled: false  # !! Remove to enable the source !!
+
     freshness: 
       warn_after: {count: 30, period: day}
       error_after: {count: 90, period: day}   
@@ -23,7 +25,7 @@ sources:
           - name: FROM_FILE
             data_tests:
               - not_null
-              - all_files_from_stage:
+              - pragmatic_data.all_files_from_stage:
                   pattern: 'table_one/.*TABLE_ONE.*[.]csv[.]gz'  #-- where the files are, from ingestion
                   stage_name: "{{ get_SYSTEM_ABC_ingestion_stage_name() }}"
-              - file_order_is_correct
+              - pragmatic_data.file_order_is_correct

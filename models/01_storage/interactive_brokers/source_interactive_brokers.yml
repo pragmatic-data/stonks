@@ -15,7 +15,7 @@ sources:
       - name: TRADES
         description: Trades on Interactive Brokers accounts
         columns:
-          - name: Transaction_ID
+          - name: TransactionID
             description: The unique ID of a Trade.
             data_tests:
               - not_null
