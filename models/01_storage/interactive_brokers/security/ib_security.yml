@@ -1,0 +1,250 @@
+version: 2
+
+models:
+
+
+  - name: ABSTRACT_IB_SECURITY
+    config:
+      source_columns: &security_source_columns
+          - CurrencyPrimary
+          - AssetClass
+          - Symbol
+          - Description
+          - Conid
+          - SecurityID
+          - SecurityIDType
+          - CUSIP
+          - ISIN
+          - ListingExchange
+          - UnderlyingConid
+          - UnderlyingSymbol
+          - UnderlyingSecurityID
+          - UnderlyingListingExchange
+          - Issuer
+          - Multiplier
+          - Strike
+          - Expiry
+          - Put_Call
+          - PrincipalAdjustFactor
+          - ReportDate
+          - FXRateToBase
+          - FROM_FILE
+          - FILE_ROW_NUMBER
+          - FILE_LAST_MODIFIED_TS_UTC
+          - INGESTION_TS_UTC
+
+      calculated_columns: &security_calculated_columns
+          - BROKER_CODE: '!IB'
+          - SECURITY_CODE: coalesce(SECURITYID, CONID)
+          - LISTING_EXCHANGE: LISTINGEXCHANGE
+
+          - CURRENCY_PRIMARY: CURRENCYPRIMARY
+          - SECURITY_SYMBOL: SYMBOL
+          - SECURITY_NAME: DESCRIPTION
+          - ISSUER: ISSUER
+          - UNDERLYING_SECURITY_CODE: coalesce(UNDERLYINGSECURITYID, UNDERLYINGCONID)
+          - SECURITY_ID: SECURITYID
+          - SECURITY_ID_TYPE: SECURITYIDTYPE
+          - CONID: CONID
+          - CUSIP: CUSIP
+          - ISIN: ISIN
+          - ASSET_CLASS: ASSETCLASS
+          - PUT_CALL: PUT_CALL
+          - MULTIPLIER: MULTIPLIER::number
+          - STRIKE: STRIKE::number(38,2)
+          - EXPIRY: EXPIRY::date
+          - UNDERLYING_CONID: UNDERLYINGCONID
+          - UNDERLYING_SYMBOL: UNDERLYINGSYMBOL
+          - UNDERLYING_SECURITY_ID: UNDERLYINGSECURITYID
+          - UNDERLYING_LISTING_EXCHANGE: UNDERLYINGLISTINGEXCHANGE
+          - PRINCIPAL_ADJUST_FACTOR: PRINCIPALADJUSTFACTOR
+          - REPORT_DATE: REPORTDATE::date
+          - EXTRACTION_PERIOD_START: TRY_TO_DATE(SUBSTR(RIGHT(RECORD_SOURCE, 24), 1, 8), 'YYYYMMDD')
+          - EXTRACTION_PERIOD_END: TRY_TO_DATE(SUBSTR(RIGHT(RECORD_SOURCE, 24), 10, 8), 'YYYYMMDD')
+
+          # metadata
+          # - EFFECTIVITY_DATE: EFFECTIVITY_DATE::TIMESTAMP_NTZ
+          - RECORD_SOURCE: FROM_FILE
+          - FILE_ROW_NUMBER: FILE_ROW_NUMBER
+          - FILE_LAST_MODIFIED_TS_UTC: FILE_LAST_MODIFIED_TS_UTC
+          - INGESTION_TS_UTC: INGESTION_TS_UTC
+
+      hashed_columns: &security_hashed_columns
+        SECURITY_HKEY:          #-- https://en.wikipedia.org/wiki/International_Securities_Identification_Number#Description
+          - SECURITY_CODE
+          - LISTING_EXCHANGE
+        SECURITY_HDIFF:
+          - BROKER_CODE
+          - LISTING_EXCHANGE
+          - SECURITY_SYMBOL
+          - SECURITY_CODE
+          - SECURITY_NAME
+          - ASSET_CLASS
+          - ISSUER
+          - CURRENCY_PRIMARY
+          - SECURITY_ID
+          - SECURITY_ID_TYPE
+          - CONID
+          - CUSIP
+          - ISIN
+          - PUT_CALL
+          - MULTIPLIER
+          - STRIKE
+          - EXPIRY
+          - UNDERLYING_CONID
+          - UNDERLYING_SYMBOL
+          - UNDERLYING_SECURITY_ID
+          - UNDERLYING_LISTING_EXCHANGE
+          - PRINCIPAL_ADJUST_FACTOR
+
+      default_records: &security_default_records
+          - not_provided:    #-- def_record_1
+              - BROKER_CODE: "'-1'"
+              - LISTING_EXCHANGE: "'-1'"
+              - SECURITY_SYMBOL: "'-1'"
+              - SECURITY_CODE: "'-1'"
+              - SECURITY_NAME: '!NOT Provided (optional)'       #-- String literals either as "'string'" or '!string'
+              - EFFECTIVITY_DATE: "'{{ run_started_at }}'::timestamp"
+              - INGESTION_TS_UTC: "'{{ run_started_at }}'::timestamp"
+              - EXTRACTION_PERIOD_START: "'{{ run_started_at }}'::timestamp"
+              - EXTRACTION_PERIOD_END: "'{{ run_started_at }}'::timestamp"
+              - RECORD_SOURCE: '!System.DefaultRecord'
+          - missing:          #-- def_record_2
+              - BROKER_CODE: "'-2'"
+              - LISTING_EXCHANGE: "'-2'"
+              - SECURITY_SYMBOL: "'-2'"
+              - SECURITY_CODE: "'-2'"
+              - SECURITY_NAME: '!Missing'       #-- String literals either as "'string'" or '!string'
+              - EFFECTIVITY_DATE: "'{{ run_started_at }}'::timestamp"
+              - INGESTION_TS_UTC: "'{{ run_started_at }}'::timestamp"
+              - EXTRACTION_PERIOD_START: "'{{ run_started_at }}'::timestamp"
+              - EXTRACTION_PERIOD_END: "'{{ run_started_at }}'::timestamp"
+              - RECORD_SOURCE: '!System.DefaultRecord'
+
+    # moved column definitions and other entries under config, so I can use free names to define YAML anchors
+    #config:
+      columns_in_security_hist_BK: &security_hist_BK
+        - LISTING_EXCHANGE
+        - SECURITY_CODE
+        - INGESTION_TS_UTC
+        - EFFECTIVITY_DATE
+        - RECORD_SOURCE
+    #config:
+      stg_columns: &security_stg_column_tests
+        - name: SECURITY_HKEY
+          description: HKEY / PK is not null
+          data_tests:
+            - not_null
+        - name: concat(LISTING_EXCHANGE, SECURITY_CODE)
+          description: BK is not null
+          data_tests:
+            - not_null:
+                where: ASSET_CLASS not in('CASH', 'FOP') 
+        - name: SECURITY_SYMBOL
+          data_tests:
+            - not_null
+        - name: UNDERLYING_SECURITY_CODE
+          description: Code of the underlying security for Derivatives 
+          data_tests:
+            - not_null:
+                where: ASSET_CLASS not in('STK', 'CASH')
+        - name: EFFECTIVITY_DATE
+          data_tests:
+            - not_null
+        - name: EXTRACTION_PERIOD_START
+          data_tests:
+            - not_null
+        - name: EXTRACTION_PERIOD_END
+          data_tests:
+            - not_null
+      hist_columns: &security_hist_column_tests
+        - name: SECURITY_HKEY
+          description: HKEY / PK is not null
+          data_tests:
+            - not_null          
+        - name: concat(LISTING_EXCHANGE, SECURITY_CODE)
+          description: BK is not null
+          data_tests:
+            - not_null:
+                where: ASSET_CLASS not in('CASH', 'FOP') 
+
+
+  - name: STG_IB_OPEN_POSITIONS_SECURITY
+    config:
+      hashed_columns:     *security_hashed_columns
+      default_records:    *security_default_records
+      calculated_columns: *security_calculated_columns
+      remove_duplicates: 
+      # meta:
+      #   flattened_calculated_columns: 
+      #     <<: *security_calculated_columns
+    columns: *security_stg_column_tests
+
+  - name: HIST_IB_OPEN_POSITIONS_SECURITY
+    columns: *security_hist_column_tests
+    data_tests:
+      - pragmatic_data.keys_from_landing:
+          landing_rel: source('IB', 'OPEN_POSITIONS')
+          landing_rel_filter: " LISTINGEXCHANGE != 'ListingExchange' "
+          key_fields_landing: LISTINGEXCHANGE, coalesce(SECURITYID, CONID)
+          key_fields_hist: LISTING_EXCHANGE, SECURITY_CODE
+      - dbt_utils.unique_combination_of_columns:      #-- Max one version per (ingestion, effectivity date)
+          combination_of_columns: *security_hist_BK
+
+  - name: STG_IB_TRADES_SECURITY
+    config:
+      calculated_columns: *security_calculated_columns
+      default_records:    *security_default_records
+      hashed_columns:     *security_hashed_columns
+      remove_duplicates:
+    columns: *security_stg_column_tests
+
+  - name: HIST_IB_TRADES_SECURITY
+    columns: *security_hist_column_tests
+    data_tests:
+      - pragmatic_data.keys_from_landing:
+          landing_rel: source('IB', 'TRADES')
+          landing_rel_filter: " LISTINGEXCHANGE != 'ListingExchange' "
+          key_fields_landing: LISTINGEXCHANGE, coalesce(SECURITYID, CONID)
+          key_fields_hist: LISTING_EXCHANGE, SECURITY_CODE
+      - dbt_utils.unique_combination_of_columns:      #-- Max one version per (ingestion, effectivity date)
+          combination_of_columns: *security_hist_BK
+
+  - name: STG_IB_TRANSFERS_SECURITY
+    config:
+      calculated_columns: *security_calculated_columns
+      default_records:    *security_default_records
+      hashed_columns:     *security_hashed_columns
+      remove_duplicates: 
+    columns: *security_stg_column_tests
+
+  - name: HIST_IB_TRANSFERS_SECURITY
+    columns: *security_hist_column_tests
+    data_tests:
+      - pragmatic_data.keys_from_landing:
+          landing_rel: source('IB', 'TRANSFERS')
+          landing_rel_filter: LISTINGEXCHANGE != 'ListingExchange'
+          key_fields_landing: LISTINGEXCHANGE, coalesce(SECURITYID, CONID)
+          key_fields_hist: LISTING_EXCHANGE, SECURITY_CODE
+      - dbt_utils.unique_combination_of_columns:      #-- Max one version per (ingestion, effectivity date)
+          combination_of_columns: *security_hist_BK
+
+  - name: STG_IB_CORP_ACT_SECURITY
+    config:
+      # calculated_columns: *security_calculated_columns
+      # default_records:    *security_default_records
+      hashed_columns:     *security_hashed_columns
+      remove_duplicates: 
+    columns: *security_stg_column_tests
+
+  - name: HIST_IB_CORP_ACT_SECURITY
+    columns: *security_hist_column_tests
+    data_tests:
+      - pragmatic_data.keys_from_landing:
+          landing_rel: ref('ib_corp_act_manual')
+          landing_rel_filter: ASSET_CLASS = 'STK'
+          key_fields_landing: LISTING_EXCHANGE, SECURITY_CODE
+          key_fields_hist: LISTING_EXCHANGE, SECURITY_CODE
+      - dbt_utils.unique_combination_of_columns:      #-- Max one version per (ingestion, effectivity date)
+          combination_of_columns: *security_hist_BK
+

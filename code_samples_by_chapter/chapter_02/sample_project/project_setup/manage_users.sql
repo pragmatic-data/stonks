@@ -10,6 +10,11 @@
 
 {% set users_dict_yaml -%}
 
+## This is the default part of the setup, where you can configure the users 
+## to be created (if you run the create user macro) and asigned to the default roles.
+## You can configure only one user for the dbt_executor role (to create it run the create_dbt_executor_user... macro)
+## and a list of user for the developers or readers roles.
+
 dbt_executor: STONKS_DBT_EXECUTOR
 
 developers:
@@ -25,6 +30,12 @@ readers:
 #users_to_delete:
 #  - SOME_USER_NAME_TO_DROP
 #  - OTHER_USER_NAME_TO_DROP
+
+## This is the advanced part of the user setup, where you can leverage the existing scripts to assign existing users to existing roles.
+## You should explicitly create the roles in some other script using the create_role macro, as we already did in the project_initial_setup script.
+## We suggest making a new script file named like new_project_roles.sql with one macro for each new role you want to create.
+## Once you created the role you can configure here to which users to asisgn the role.
+## Here you do not create new users, for that you use the developers or readers lists or you create them explicitly in another macro.
 
 #SOME_ROLE:                      # An EXISTING role to be assigned to the list of users
 # - ROBERTO_ZAGNI_DEVELOPER

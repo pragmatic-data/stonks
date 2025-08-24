@@ -1,0 +1,77 @@
+version: 2
+
+models:
+
+  - name: STG_IB_TRANSFERS
+    description: |
+      Transfers IN or OUT of portfolios hold on Interactive Broker.
+      
+      The transfers are at position level, with the exception of CASH transfers that are by currency.
+
+      The TRANSFER_TYPE column explains the type of transfer (FOP = Free Of Payment, INTERNAL, ...), 
+      while the ASSET_CLASS and ASSET_SUB_CATEGORY explain what type / sub-type of security 
+      was transferred (Stocks, Options, Cash).
+    data_tests:
+      - pragmatic_data.has_sortable_versions:        #-- MAX 1 DISTINCT version in STG (HIST input) x eff date
+          key_column: TRANSFER_HKEY
+          diff_column: TRANSFER_HDIFF
+          sort_columns: EFFECTIVITY_DATE
+      - dbt_utils.unique_combination_of_columns:      #-- Max one version per report
+          combination_of_columns:
+            - TRANSFER_ID
+            - RECORD_SOURCE   #-- all files have all TXs since the start of the year => unique in each file
+
+    columns:
+      - name: TRANSFER_HKEY
+        description: HKEY / PK is not null
+        data_tests:
+          - not_null
+      - name: TRANSFER_ID
+        description: BK is not null
+        data_tests:
+          - not_null
+      - name: concat(BROKER_CODE, LISTING_EXCHANGE, SECURITY_SYMBOL, SECURITY_CODE)
+        description: Position BK is not null for position related transactions
+        data_tests:
+          - not_null:
+              where: ASSET_CLASS not in ('CASH', 'FOP')
+
+      # - name: SECURITY_CODE
+      #   data_tests:
+      #     - relationships:
+      #         to: ref('STG_IB_TRANSFERS_SECURITY')
+      #         field: SECURITY_CODE
+      #         where: ASSET_CLASS not in ('CASH') and trade_date_time >= '2024-01-01'
+      #                 # Before 2024 some short position where opened and closed between exports
+
+  - name: HIST_IB_TRANSFERS
+    description: | 
+      Transfers IN or OUT of portfolios hold on Interactive Broker.
+
+      Transfers are immutable transactions, so they DO NOT have versions.
+    data_tests:
+      - pragmatic_data.keys_from_landing:
+          landing_rel: "{{ source('IB', 'TRANSFERS') }}"
+          landing_rel_filter: " LISTINGEXCHANGE != 'ListingExchange' "
+          key_fields_landing: TransactionID
+          key_fields_hist: Transfer_ID
+
+    columns:
+      - name: TRANSFER_HKEY
+        description: HKEY / PK is not null & unique (immutable TX)
+        data_tests:
+          - not_null
+          - unique
+      - name: TRANSFER_ID
+        description: BK is not null & unique (immutable TX)
+        data_tests:
+          - not_null
+          - unique
+
+      # - name: SECURITY_CODE
+      #   description: Mandatory FK is not null
+      #   data_tests:
+      #     - relationships:
+      #         to: ref('HIST_IB_TRANSFERS_SECURITY')
+      #         field: SECURITY_CODE
+      #         where: ASSET_CLASS not in ('CASH', 'FOP')

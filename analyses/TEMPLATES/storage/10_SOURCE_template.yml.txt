@@ -1,0 +1,34 @@
+# NOTE: This file has a .txt extension to avoid running tests on non -existing sources.
+#       In your project the sources MUST be in a .yml file.
+
+version: 2
+
+sources:
+
+  - name: SYSTEM_ABC
+    database: target.database     # the database where you find the sources for this system
+    schema: LANDING_TABLE_SCHEMA  # the schema where you find the sources for this system 
+    loader: Pragmatic Data Platform Ingestion
+
+    enabled: false  # !! Remove to enable the source !!
+
+    freshness: 
+      warn_after: {count: 30, period: day}
+      error_after: {count: 90, period: day}   
+    loaded_at_field: INGESTION_TS_UTC      # TRY_TO_TIMESTAMP(SOME_DATE)
+
+    tables: 
+      - name: TABLE_ONE
+        description: Table one source data from SYSTEM_ABC
+        columns:
+          - name: TABLE_ONE_ID
+            description: The unique ID of TABLE_ONE.
+            data_tests:
+              - not_null
+          - name: FROM_FILE
+            data_tests:
+              - not_null
+              - pragmatic_data.all_files_from_stage:
+                  pattern: 'table_one/.*TABLE_ONE.*[.]csv[.]gz'  #-- where the files are, from ingestion
+                  stage_name: "{{ get_SYSTEM_ABC_ingestion_stage_name() }}"
+              - pragmatic_data.file_order_is_correct

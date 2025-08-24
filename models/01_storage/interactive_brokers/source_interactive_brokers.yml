@@ -1,0 +1,78 @@
+version: 2
+
+sources:
+
+  - name: IB
+    loader: Pragmatic Data Platform Ingestion
+    schema: LAND_IB
+
+    freshness: 
+      warn_after: {count: 30, period: day}
+      error_after: {count: 90, period: day}   
+    loaded_at_field: TRY_TO_TIMESTAMP(REPORTDATE)      # INGESTION_TS_UTC
+
+    tables: 
+      - name: TRADES
+        description: Trades on Interactive Brokers accounts
+        columns:
+          - name: TransactionID
+            description: The unique ID of a Trade.
+            data_tests:
+              - not_null
+          - name: CLIENTACCOUNTID
+            description: The unique ID of a client account.
+            data_tests:
+              - not_null
+          - name: FROM_FILE
+            data_tests:
+              - not_null
+              - pragmatic_data.all_files_from_stage:
+                  pattern: 'Trades/.*Trades.*[.]csv.gz'
+                  stage_name: "{{ get_IB_ingestion_stage_name() }}"
+              - pragmatic_data.file_order_is_correct
+
+      - name: OPEN_POSITIONS
+        description: Open Positions on Interactive Brokers accounts
+        columns:
+          - name: CLIENTACCOUNTID
+            description: The unique ID of a client account.
+            data_tests:
+              - not_null
+          - name: FROM_FILE
+            data_tests:
+              - not_null
+              - pragmatic_data.all_files_from_stage:
+                  pattern: 'open_positions/.*OpenPositions.*[.]csv.gz'                   #-- open_positions/flex.523921.OpenPositions.20230102.20231229.csv.gz
+                  stage_name: "{{ get_IB_ingestion_stage_name() }}"
+              - pragmatic_data.file_order_is_correct
+
+      - name: CASH_TRANSACTIONS
+        description: Cash Transactions on Interactive Brokers accounts
+        columns:
+          - name: CLIENTACCOUNTID
+            description: The unique ID of a client account.
+            data_tests:
+              - not_null
+          - name: FROM_FILE
+            data_tests:
+              - not_null
+              - pragmatic_data.all_files_from_stage:
+                  pattern: 'CashTransactions/.*CashTransactions.*[.]csv.gz'
+                  stage_name: "{{ get_IB_ingestion_stage_name() }}"
+              - pragmatic_data.file_order_is_correct
+
+      - name: TRANSFERS
+        description: Transfers In and Out of Interactive Brokers accounts
+        freshness: null        
+        columns:
+          - name: CLIENTACCOUNTID
+            description: The unique ID of a client account.
+            data_tests:
+              - not_null
+          - name: FROM_FILE
+            data_tests:
+              - not_null
+              - pragmatic_data.all_files_from_stage:
+                  pattern: 'Transfers/Transfers.*[.]csv'
+                  stage_name: "{{ get_IB_ingestion_stage_name() }}"
+              - pragmatic_data.file_order_is_correct

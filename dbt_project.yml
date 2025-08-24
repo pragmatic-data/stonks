@@ -11,7 +11,7 @@ model-paths: ["models"]
 analysis-paths: ["analyses"]
 test-paths: ["tests"]
 seed-paths: ["seeds"]
-macro-paths: ["macros", "project_setup", "migrations"]
+macro-paths: ["macros", "project_setup", "migrations", "ingestion"]
 snapshot-paths: ["snapshots"]
 
 target-path: "target"  # directory which will store compiled SQL files
@@ -57,25 +57,33 @@ vars:
   # initial_pw - The initial password to assign to users when created. 
   #            - While it MUST be changed after the user creation, it better come from ENV vars and not the string here.
 
-  shared_dev_wh: COMPUTE_WH
+  # shared_dev_wh: COMPUTE_WH
   # shared_dev_wh - the shared development warehouse to assign to developers in addition to the project warehouse
   #                 The idea is that it is more cost efficient for many developers to share a single DEV WH
   #                 than each DEV using the specific WH for the project she's working on at the moment.
 
   # reporting_wh: REPORTING_WH
   # reporting_wh - an example of extra warehouse
+  
+  ## Variables to re-define the VALID_TO value and type for current rows
+  # pdp.end_of_time: 9999-12-31   # PDP default is 9999-09-09
+  # pdp.end_of_time_type: DATE    # could be timestamp
 
 
 # Configuring models
 models:
   stonks:
+    01_storage:
+      interactive_brokers:
+        +materialized: view
+        +schema: storage_ib
+        
     example:
-      +materialized: view
-      +schema: EXAMPLE
 
-    example_TEST:
-      +materialized: view
-      +schema: EXAMPLE_TEST
-      +enabled: "{{ true if target.name == 'dev' else false }}"
-      +group: EXAMPLE_TEST
-      +access: private
+seeds:
+  stonks:
+    +schema: seeds
+    +post-hook:
+      - "ALTER TABLE {{ this }} ADD COLUMN IF NOT EXISTS ingestion_ts_utc timestamp"
+      - "UPDATE {{ this }} SET ingestion_ts_utc = '{{ run_started_at }}' WHERE ingestion_ts_utc is null"
+

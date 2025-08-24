@@ -1,0 +1,83 @@
+version: 2
+
+models:
+
+  - name: STG_IB_CASH_TRANSACTIONS
+    description: |
+      Cash transactions in portfolios hold on Interactive Broker.
+      
+      The cash transactions are at account level or position level and are divided into 
+      these categories: dividends (position), deposits, costs or interests (account).
+      
+      The Transaction Type column has some values (Withholding Tax, Other Fees) that overlap across categories.
+    data_tests:
+      - pragmatic_data.has_sortable_versions:        #-- MAX 1 DISTINCT version in STG (HIST input) x eff date
+          key_column: TRANSACTION_HKEY
+          diff_column: TRANSACTION_HDIFF
+          sort_columns: EFFECTIVITY_DATE
+      - dbt_utils.unique_combination_of_columns:      #-- Max one version per report
+          combination_of_columns:
+            - Transaction_Type
+            - Transaction_ID
+            - TX_DESCRIPTION
+            - REPORT_DATE
+            - RECORD_SOURCE   #-- all files have all TXs since the start of the year => unique in each file
+
+    columns:
+      - name: TRANSACTION_HKEY
+        description: HKEY / PK is not null
+        data_tests:
+          - not_null
+      - name: concat(Transaction_Type, Transaction_ID)
+        description: BK is not null
+        data_tests:
+          - not_null
+      - name: concat(BROKER_CODE, LISTING_EXCHANGE, SECURITY_SYMBOL, SECURITY_CODE)
+        description: Position BK is not null for position related transactions
+        data_tests:
+          - not_null:
+              where: ASSET_CLASS = 'STK'
+      - name: Transaction_Category
+        description: The category of the transaction
+        data_tests:
+          - accepted_values:
+              values: ['DIVIDENDS', 'INTERESTS', 'DEPOSITS', 'COSTS']   #-- NO 'UNKNOWN' TXs !
+      - name: SECURITY_CODE
+        data_tests:
+          - relationships:
+              to: ref('STG_IB_OPEN_POSITIONS_SECURITY')   #-- we have dividens for positions we have imported => no trades
+              field: SECURITY_CODE
+              where: ASSET_CLASS = 'STK'
+
+  - name: HIST_IB_CASH_TRANSACTIONS
+    description: Cash Transactions in portfolios hold on Interactive Broker.
+    data_tests:
+      - pragmatic_data.keys_from_landing:
+          landing_rel: "{{ source('IB', 'CASH_TRANSACTIONS') }}"
+          landing_rel_filter: STARTSWITH(CLIENTACCOUNTID, 'U')
+          key_fields_landing: TransactionID, Type
+          key_fields_hist: Transaction_ID, Transaction_Type
+      - dbt_utils.unique_combination_of_columns:      #-- Max one version as TXs are immutable
+          combination_of_columns:
+            - Transaction_ID
+            - Transaction_Type
+            - TX_DESCRIPTION
+#            - REPORT_DATE
+    columns:
+      - name: TRANSACTION_HKEY
+        description: HKEY / PK is not null
+        data_tests:
+          - not_null
+          - unique    # This checks that the TX have no versions = are immutable
+      - name: concat(Transaction_ID, Transaction_Type)
+        description: BK is not null
+        data_tests:
+          - not_null
+      - name: SECURITY_CODE
+        description: Mandatory FK is not null
+        data_tests:
+          - relationships:
+              to: ref('HIST_IB_OPEN_POSITIONS_SECURITY')  #-- we have dividens for positions we have imported => no trades
+              field: SECURITY_CODE
+              where: ASSET_CLASS = 'STK'
+

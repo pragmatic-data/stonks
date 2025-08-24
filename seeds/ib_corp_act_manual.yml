@@ -1,0 +1,40 @@
+version: 2
+
+seeds:
+  - name: ib_corp_act_manual
+    description: Manually entered Transactions for Corporate Actions
+    config:
+      column_types: # only the ones we want to change compared to the dbt/SF inferred data types
+        CORP_ACT_DATE: TIMESTAMP_NTZ
+        QUANTITY: NUMBER(38,9)
+        FX_RATE_TO_BASE: NUMBER(38,9)
+        TX_MONEY_FX: NUMBER(38,9)
+        TX_MONEY_BASE: NUMBER(38,9)
+        COST_BASIS_FX: NUMBER(38,9)
+        NOTES_CODES: TEXT
+        TRANSACTION_ID: TEXT
+
+    tests:
+      - dbt_utils.expression_is_true:
+          expression: QUANTITY * COST_BASIS_FX >= 0
+      - dbt_utils.expression_is_true:
+          expression: TX_MONEY_FX * TX_MONEY_BASE >= 0
+      - dbt_utils.expression_is_true:
+          expression: QUANTITY * TX_MONEY_FX <= 0
+      - dbt_utils.expression_is_true:
+          expression: CASE WHEN QUANTITY > 0 THEN BUY_SELL = 'BUY' ELSE BUY_SELL = 'SELL' END
+
+    columns:
+      - name: concat_ws('|', BROKER_CODE,CLIENT_ACCOUNT_CODE,SECURITY_CODE,LISTING_EXCHANGE,CORP_ACT_DATE)
+        description: Test that the Transactions entered for a Corporate Actions are unique.
+        data_tests:
+          - unique
+          - not_null
+      - name: concat_ws('|', BROKER_CODE,CLIENT_ACCOUNT_CODE,ASSET_CLASS, CORP_ACT_DATE, CORP_ACT_ORDER)
+        description: |
+          Test that the order of the Transactions entered for a Corporate Actions is unique.
+          To keep the security code, symbol and exchange out of the picture (as they will make the row unique even with the same ordering number),
+          we gamble on the fact that it is unlikely to have two Corporate Actions in the same account on the same date.
+        data_tests:
+          - unique
+          - not_null

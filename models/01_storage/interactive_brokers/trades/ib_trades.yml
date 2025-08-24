@@ -1,0 +1,111 @@
+version: 2
+
+models:
+
+  - name: STG_IB_TRADES
+    description: |
+      Trades in all asset classes in portfolios hold on Interactive Broker.
+      
+      The trades are at position level (with the exception of CASH trades to exchange funds).
+      The main types of trades are standard trades for whole securities and fractional trades.
+      
+      The Transaction Type column has some values (Withholding Tax, Other Fees) that overlap across categories.
+    data_tests:
+      - pragmatic_data.has_sortable_versions:        #-- MAX 1 DISTINCT version in STG (HIST input) x eff date
+          key_column: TRADE_HKEY
+          diff_column: TRADE_HDIFF
+          sort_columns: EFFECTIVITY_DATE, RECORD_SOURCE
+      - dbt_utils.unique_combination_of_columns:      #-- Max one version per report
+          combination_of_columns:
+            - Transaction_ID
+            - RECORD_SOURCE   #-- all files have all TXs since the start of the year => unique in each file
+
+    columns:
+      - name: TRADE_HKEY
+        description: HKEY / PK is not null
+        data_tests:
+          - not_null
+      - name: Transaction_ID
+        description: BK is not null
+        data_tests:
+          - not_null
+      - name: concat(BROKER_CODE, LISTING_EXCHANGE, SECURITY_SYMBOL, SECURITY_CODE)
+        description: Position BK is not null for position related transactions
+        data_tests:
+          - not_null:
+              where: ASSET_CLASS not in ('CASH', 'FOP')
+      - name: SECURITY_CODE
+        data_tests:
+          - relationships:
+              to: ref('STG_IB_TRADES_SECURITY')
+              field: SECURITY_CODE
+              where: ASSET_CLASS not in ('CASH', 'FOP') and trade_date_time >= '2024-01-01'
+                      # Before 2024 some short position where opened and closed between exports
+
+  - name: HIST_IB_TRADES
+    description: | 
+      Trades in all asset classes in portfolios hold on Interactive Broker.
+
+      Trades are immutable transactions, so they SHOULD NOT have versions,
+      BUT the export from IB has sometimes added the Underlying code for STOCK positions
+      instead of keeping it null, so we end up with two versions (two HDIFF) even if the contents 
+      are pretty much the same.
+    data_tests:
+      - pragmatic_data.keys_from_landing:
+          landing_rel: "{{ source('IB', 'TRADES') }}"
+          landing_rel_filter: STARTSWITH(CLIENTACCOUNTID, 'U')
+          key_fields_landing: TransactionID
+          key_fields_hist: Transaction_ID
+      - dbt_utils.unique_combination_of_columns:      #-- Max one version per report
+          combination_of_columns:
+            - Transaction_ID
+            - RECORD_SOURCE   #-- While TX are immutable their export sometimes have different values in some columns in different exports
+      - dbt_utils.unique_combination_of_columns:      #-- Max one version per report
+          combination_of_columns:
+            - TRADE_HKEY
+            - RECORD_SOURCE   #-- While TX are immutable their export sometimes have different values in some columns in different exports
+    columns:
+      - name: TRADE_HKEY
+        description: HKEY / PK is not null, BUT NOT unique (despite immutable TX) as Security info can change
+        data_tests:
+          - not_null
+      - name: Transaction_ID
+        description: BK is not null, BUT NOT unique (despite immutable TX) as Security info can change
+        data_tests:
+          - not_null
+      - name: SECURITY_CODE
+        description: Mandatory FK is not null
+        data_tests:
+          - not_null
+          - relationships:
+              to: ref('HIST_IB_TRADES_SECURITY')
+              field: SECURITY_CODE
+              where: ASSET_CLASS not in ('CASH', 'FOP') and trade_date_time >= '2024-01-01'
+
+  - name: VER_IB_TRADES
+    description: All versions of the trades entity.
+    data_tests:
+      - dbt_utils.expression_is_true:
+          expression: IS_CURRENT and VALID_TO = '9999-09-09'::date
+      - dbt_utils.mutually_exclusive_ranges:
+          lower_bound_column: VALID_FROM
+          upper_bound_column: VALID_TO
+          partition_by: TRADE_HKEY
+          gaps: not_allowed
+          zero_length_range_allowed: true
+    columns:
+      - name: Transaction_ID
+        description: BK is not null, AND unique on current version
+        data_tests:
+          - not_null
+          - unique:
+              where: IS_CURRENT
+      - name: SECURITY_CODE
+        description: Mandatory FK is not null
+        data_tests:
+          - not_null
+          - relationships:
+              to: ref('VER_IB_TRADES_SECURITY')
+              field: SECURITY_CODE
+              where: ASSET_CLASS not in ('CASH', 'FOP') and trade_date_time >= '2024-01-01'
+
