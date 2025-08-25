@@ -1,3 +1,5 @@
+{{ config( secure = true ) }}  {# Needed to force applying the filter to the view before the pushdown of filters from tests. #}
+
 {%- set source_model = source('IB', 'TRADES') %}
 {%- set configuration -%}
 source:

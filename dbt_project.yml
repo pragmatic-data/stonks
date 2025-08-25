@@ -76,9 +76,11 @@ models:
     01_storage:
       interactive_brokers:
         +materialized: view
-        +schema: storage_ib
-        
-    example:
+        +schema: ib_storage
+    02_refined:
+      interactive_brokers:
+        +materialized: view
+        +schema: ib_refined
 
 seeds:
   stonks:
