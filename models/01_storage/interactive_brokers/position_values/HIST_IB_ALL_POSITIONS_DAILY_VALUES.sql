@@ -3,7 +3,7 @@
 {{ pragmatic_data.save_history_with_multiple_versions(
     input_rel               = ref('STG_IB_ALL_POSITIONS_DAILY_VALUES'), 
     key_column              = 'POSITION_HKEY',
-    diff_column             = 'POSITION_DAILY_HDIFF',
+    diff_column             = 'POSITION_VALUE_HDIFF',
 
     sort_expr               = 'REPORT_DATE',
 ) }}

@@ -42,7 +42,7 @@ hashed_columns:
         - SECURITY_CODE
         - LISTING_EXCHANGE
 
-    POSITION_DAILY_HDIFF:
+    POSITION_VALUE_HDIFF:
         - BROKER_CODE
         - CLIENT_ACCOUNT_CODE
         - SECURITY_CODE
@@ -50,7 +50,7 @@ hashed_columns:
         - CURRENCY_PRIMARY
         - SECURITY_SYMBOL
         - UNDERLYING_SECURITY_CODE
-        - REPORT_DATE
+        - REPORT_DATE                   #-- This in the HDIFF turns the entity into a time-serie.
         - FX_RATE_TO_BASE
         - MARK_PRICE
         - POSITION_VALUE
