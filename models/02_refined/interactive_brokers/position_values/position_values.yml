@@ -8,5 +8,4 @@ models:
             - position_value_date
       - dbt_utils.expression_is_true:
           expression: position_value_date = EFFECTIVITY_DATE
-
       
