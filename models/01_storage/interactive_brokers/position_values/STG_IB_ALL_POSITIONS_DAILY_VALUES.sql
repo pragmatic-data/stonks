@@ -4,7 +4,7 @@
  *  =3= Claculation of the updated HDIFF after the union
  */
 {% set hashed_columns %}
-POSITION_DAILY_HDIFF:
+POSITION_VALUE_HDIFF:
     - BROKER_CODE
     - CLIENT_ACCOUNT_CODE
     - SECURITY_CODE
@@ -60,7 +60,7 @@ closed_positions_values as (
 )
 
 SELECT * 
-    ,  {{ pragmatic_data.pdp_hash( hashed_columns_dict['POSITION_DAILY_HDIFF'] ) }} as POSITION_DAILY_HDIFF
+    ,  {{ pragmatic_data.pdp_hash( hashed_columns_dict['POSITION_VALUE_HDIFF'] ) }} as POSITION_VALUE_HDIFF
     -- Moved calculation here to use the RE-Defined values instead of the input values for the closed positions
 FROM closed_positions_values
 

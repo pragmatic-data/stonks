@@ -1,0 +1,62 @@
+version: 2
+
+models:
+
+  - name: MHIST_IB_SECURITIES
+    description: |
+      Unified model with the full HISTORY of changes based on Position and Trade security information.
+  
+      This model merges the HIST models of security information from the Open Position and Trades.
+      The merge is by Secutity HKey, with the sequence of versions by effectivity and extraction period.
+    data_tests:
+      - pragmatic_data.has_sortable_versions:        #-- MAX 1 DISTINCT version in STG (HIST input) x eff date
+          key_column: SECURITY_HKEY
+          diff_column: SECURITY_HDIFF
+          sort_columns: EFFECTIVITY_DATE, EXTRACTION_PERIOD_START, EXTRACTION_PERIOD_END
+      - dbt_utils.unique_combination_of_columns:      #-- Max one version per effectivity date
+          combination_of_columns: 
+            - LISTING_EXCHANGE
+            - SECURITY_CODE
+            - EFFECTIVITY_DATE
+
+  - name: REFH_IB_SECURITIES
+    description: |
+      All the versions of the Security Information for each security appearing in a Position or Trade.
+      
+      To get only the latest version for each Security use the `IS_CURRENT` column.
+      Please note that here we mean Technical security, as identified by its HKey 
+      that in turn is based on ISIN or CONID depending onthe type of security.
+      
+      Please consider that the EFFECTIVITY_DATE and the VALID_FROM columns of the first VERSION 
+      is anticipated to the start of the export period if the security info is coming from an Opern Position.
+      This is done to accomodate the fact that for older periods of time we got only one export 
+      by quarter or month and the report date, and therefore the effectivity, was the last day 
+      of the export period. 
+      This info is still available for each version in a few columns: 
+        - REPORT_DATE that sets the EFFECTIVITY_DATE in all other cases and comes from the payload of the export
+        - EXTRACTION_PERIOD_END that comes from the export file name
+      
+    data_tests:
+      - dbt_utils.unique_combination_of_columns:      #-- Max one version per effectivity date
+          combination_of_columns: 
+            - LISTING_EXCHANGE
+            - SECURITY_CODE
+            - EFFECTIVITY_DATE
+      - dbt_utils.unique_combination_of_columns:      #-- Max one version per effectivity date
+          combination_of_columns: 
+            - SECURITY_HKEY
+            - EFFECTIVITY_DATE
+    columns:
+      - name: SECURITY_HKEY
+        description: HKEY / PK is not null
+        data_tests:
+          - not_null
+      - name: concat(BROKER_CODE, LISTING_EXCHANGE, SECURITY_CODE)
+        description: Security BK is not null
+        data_tests:
+          - not_null:
+              where: ASSET_CLASS not in('CASH', 'FOP') 
+      - name: SECURITY_SYMBOL
+        description: Security Code is not null
+        data_tests:
+          - not_null
