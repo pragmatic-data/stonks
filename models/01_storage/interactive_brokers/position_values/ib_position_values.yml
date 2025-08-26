@@ -23,7 +23,7 @@ models:
       # - dbt_utils.unique_combination_of_columns:          #-- MAX 1 copy of each version x eff date
       #     combination_of_columns:
       #       - POSITION_HKEY
-      #       - POSITION_DAILY_HDIFF
+      #       - POSITION_VALUE_HDIFF
       #       - EFFECTIVITY_DATE
       - dbt_utils.unique_combination_of_columns:          #-- MAX 1 version x eff date
           combination_of_columns:

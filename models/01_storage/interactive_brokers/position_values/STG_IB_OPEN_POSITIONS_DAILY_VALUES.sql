@@ -42,7 +42,7 @@ hashed_columns:
         - SECURITY_CODE
         - LISTING_EXCHANGE
 
-    POSITION_DAILY_HDIFF:
+    POSITION_VALUE_HDIFF:
         - BROKER_CODE
         - CLIENT_ACCOUNT_CODE
         - SECURITY_CODE
