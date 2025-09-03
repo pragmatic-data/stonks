@@ -5,7 +5,7 @@ calculated_columns:
 
 base_table:
     name: "{{ ref('VER_IB_CASH_TRANSACTIONS') }}"
-    filter: TRANSACTION_CATEGORY = 'DIVIDENDS'
+    filter: TRANSACTION_CATEGORY = 'DIVIDENDS' and bt.IS_CURRENT    #-- is_current is needed to add restatements
     include_all_columns: false
     columns:
         - TRANSACTION_ID
