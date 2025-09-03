@@ -10,7 +10,7 @@ The major difference between the two methods is what you will see in the end:
 
 What do they entail:
 - Method 1 (**Reversal**): 
-  We would add two TX in a new date to reverse the two wrong TXs and add two more with the right value.
+  We would add two TX in a new date to reverse the two wrong TXs and add two more on th esame new date with the right value.
   This will add 4 immutable TXs (all with new IDs). Nothing else to do. 
   This is how the broker also fixes their mistakes, and the suggested way if you care about the highest level of auditing. 
   It takes a bit more of effort to correctly produce the 4 TXs with a new ID and all, 
