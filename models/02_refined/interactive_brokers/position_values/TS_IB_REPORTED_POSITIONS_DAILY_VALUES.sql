@@ -1,6 +1,6 @@
 {{ config(materialized='incremental') }}
 
-{%- set yaml_str -%}
+{%- set configuration -%}
 calculated_columns:
     - gain_fx: bt.position_value - t1.cost_basis_money
     - gain_pct_fx: DIV0(gain_fx, ABS(t1.cost_basis_money)) * 100
@@ -95,12 +95,12 @@ joined_tables:
 
 {%- endset -%}
 
-{%- set metadata_dict = fromyaml(yaml_str) -%}
+{%- set cfg = fromyaml(configuration) -%}
 
 {{- pragmatic_data.time_join(
-    base_table_dict     = metadata_dict['base_table'],
-    joined_tables_dict  = metadata_dict['joined_tables'],
-    calculated_columns  = metadata_dict['calculated_columns']
+    base_table_dict     = cfg['base_table'],
+    joined_tables_dict  = cfg['joined_tables'],
+    calculated_columns  = cfg['calculated_columns']
 ) }}
 
 ORDER BY POSITION_HKEY, EFFECTIVITY_DATE
