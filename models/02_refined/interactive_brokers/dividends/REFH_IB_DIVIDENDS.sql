@@ -69,7 +69,7 @@ joined_tables:
             - SECURITY_VALID_TO:         VALID_TO
             - SECURITY_IS_CURRENT:       IS_CURRENT
 
-    {{ ref('REFH_REPORTED_POSITIONS') }}:
+    {{ ref('REFH_IB_REPORTED_POSITIONS') }}:
         filter: SIDE != 'Closed'
         time_column:    #-- The default time operator is '>=' that gives bt.DT >= tn.DT, that is Tn is active before BT 
             EFFECTIVITY_DATE: EFFECTIVITY_DATE       #-- TN_col: BT_col
