@@ -1,4 +1,4 @@
-{%- set yaml_str -%}
+{%- set configuration -%}
 calculated_columns:
     - DIM_SECURITY_SYMBOL: COALESCE(t1.SECURITY_SYMBOL, DIVIDEND_SECURITY_SYMBOL)
     - DIM_SECURITY_HKEY: COALESCE(t1.SECURITY_HKEY, bt.SECURITY_HKEY)
@@ -86,12 +86,12 @@ joined_tables:
 
 {%- endset -%}
 
-{%- set metadata_dict = fromyaml(yaml_str) -%}
+{%- set cfg = fromyaml(configuration) -%}
 
 {{- pragmatic_data.time_join(
-    base_table_dict     = metadata_dict['base_table'],
-    joined_tables_dict  = metadata_dict['joined_tables'],
-    calculated_columns  = metadata_dict['calculated_columns']
+    base_table_dict     = cfg['base_table'],
+    joined_tables_dict  = cfg['joined_tables'],
+    calculated_columns  = cfg['calculated_columns']
 ) }}
 
 order by bt.ACCOUNT_ALIAS, DIVIDEND_SECURITY_SYMBOL, EFFECTIVITY_DATE, TRANSACTION_TYPE
