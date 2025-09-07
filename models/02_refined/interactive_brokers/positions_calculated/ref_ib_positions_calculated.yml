@@ -31,3 +31,46 @@ models:
         - COST_BASIS_FX
         - COST_BASIS_BASE
         - COST_BASIS_CHANGE_FX
+    data_tests:
+      - dbt_utils.expression_is_true: # Cost basis sign
+          expression: | 
+            CASE
+              WHEN TRANSACTION_TYPE = 'SPLIT' THEN COST_BASIS_CHANGE_FX = 0
+              WHEN SIDE = 'Long' and OPEN_CLOSE_INDICATOR = 'O' THEN COST_BASIS_CHANGE_FX > 0
+              WHEN SIDE = 'Long' and OPEN_CLOSE_INDICATOR = 'C' THEN COST_BASIS_CHANGE_FX < 0
+              WHEN SIDE = 'Short' and OPEN_CLOSE_INDICATOR = 'O' THEN COST_BASIS_CHANGE_FX < 0
+              WHEN SIDE = 'Short' and OPEN_CLOSE_INDICATOR = 'C' THEN COST_BASIS_CHANGE_FX > 0
+              ELSE COST_BASIS_CHANGE_FX = 0
+            END
+      - dbt_utils.expression_is_true: # Cost basis sign
+          expression: | 
+            CASE
+              WHEN SIDE = 'Long' THEN COST_BASIS_FX > 0
+              WHEN SIDE = 'Short' THEN COST_BASIS_FX < 0
+              ELSE COST_BASIS_FX = 0
+            END
+      - dbt_utils.expression_is_true: # open or increase position
+          expression: | 
+            CASE
+              WHEN (SIDE = 'Long' and POSITION_QUANTITY_CHANGE > 0) OR (SIDE = 'Short' and POSITION_QUANTITY_CHANGE < 0)  -- open or increase position
+              THEN OPEN_CLOSE_INDICATOR = 'O'
+            END
+      - dbt_utils.expression_is_true: # close or reduce position
+          expression: | 
+            CASE
+              WHEN (SIDE = 'Long' and POSITION_QUANTITY_CHANGE < 0) OR (SIDE = 'Short' and POSITION_QUANTITY_CHANGE > 0)  -- close or reduce position
+              THEN OPEN_CLOSE_INDICATOR = 'C'
+            END
+      - dbt_utils.expression_is_true: # closed position
+          expression: | 
+            CASE
+              WHEN SIDE = 'Closed'
+              THEN OPEN_CLOSE_INDICATOR = 'C'
+            END
+
+        # , CASE
+        #     WHEN NEW_SIDE = 'Closed' THEN 0 
+        #     WHEN (NEW_SIDE = 'Long' and t.QUANTITY > 0) OR (NEW_SIDE = 'Short' and t.QUANTITY < 0)  -- open or increase position
+        #         THEN c.COST_BASIS_FX + t.COST_BASIS_FX
+        #     ELSE c.COST_BASIS_FX / c.POSITION_QUANTITY * NEW_POSITION_QUANTITY      -- close or reduce position
+        #   END as NEW_COST_BASIS_FX

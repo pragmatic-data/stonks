@@ -49,9 +49,9 @@ sorted_transactions as (
 
         , CASE
             WHEN NEW_SIDE = 'Closed' THEN 0 
-            WHEN (NEW_SIDE = 'Long' and t.QUANTITY > 0) OR (NEW_SIDE = 'Short' and t.QUANTITY < 0)
+            WHEN (NEW_SIDE = 'Long' and t.QUANTITY > 0) OR (NEW_SIDE = 'Short' and t.QUANTITY < 0)  -- open or increase position
                 THEN c.COST_BASIS_FX + t.COST_BASIS_FX
-            ELSE c.COST_BASIS_FX / c.POSITION_QUANTITY * NEW_POSITION_QUANTITY
+            ELSE c.COST_BASIS_FX / c.POSITION_QUANTITY * NEW_POSITION_QUANTITY      -- close or reduce position
           END as NEW_COST_BASIS_FX
 
         , CASE
