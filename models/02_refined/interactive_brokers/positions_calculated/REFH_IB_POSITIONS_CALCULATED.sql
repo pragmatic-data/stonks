@@ -70,7 +70,7 @@ sorted_transactions as (
 )
 
 SELECT * 
-    , TX_ORDER_IN_POSITION as POSITION_CALCULATED_HDIFF
+    , TX_ORDER_IN_POSITION || '-' || POSITION_HKEY::text as POSITION_CALCULATED_HDIFF
     {#  
         ** NOTE on the POSITION_CALCULATED_HDIFF column
         *  To build the VER model on top of the REFH we need to pass an HDIFF column 

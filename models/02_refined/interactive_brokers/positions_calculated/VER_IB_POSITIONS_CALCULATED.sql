@@ -3,5 +3,6 @@
     key_column              = 'POSITION_HKEY',
     diff_column             = 'POSITION_CALCULATED_HDIFF',
 
-    version_sort_column     = 'EFFECTIVITY_DATE'
+    version_sort_column     = 'EFFECTIVITY_DATE',
+    extra_sort_columns      = 'TX_ORDER_IN_POSITION'
 ) }}
