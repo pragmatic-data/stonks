@@ -1,0 +1,33 @@
+version: 2
+models:
+  - name: REFH_IB_POSITIONS_CALCULATED
+    config:
+      position_hdiff_columns:   # Here we list all the payload columns in the model, for complete hash
+        - BROKER_CODE
+        - CLIENT_ACCOUNT_CODE
+        - LISTING_EXCHANGE
+        - SECURITY_CODE
+        - SECURITY_SYMBOL
+        - SECURITY_NAME
+        - ACCOUNT_ALIAS
+        - ASSET_CLASS
+        - EFFECTIVITY_DATE
+        - POSITION_QUANTITY_CHANGE
+        - CURRENCY_PRIMARY
+        - FX_RATE_TO_BASE
+
+        - TRANSACTION_ID
+        - TRANSACTION_TYPE
+        - TRANSACTION_TS
+        - TX_MONEY_FX
+        - TX_MONEY_BASE
+        - OPEN_CLOSE_INDICATOR
+        - NOTES_CODES
+        - BUY_SELL
+        - TX_ORDER_IN_POSITION
+        - TX_COUNT_IN_POSITION
+        - POSITION_QUANTITY
+        - SIDE
+        - COST_BASIS_FX
+        - COST_BASIS_BASE
+        - COST_BASIS_CHANGE_FX
