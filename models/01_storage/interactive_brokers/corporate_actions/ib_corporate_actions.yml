@@ -46,18 +46,26 @@ models:
           landing_rel: ref('ib_corp_act_manual')
           key_fields_landing: concat_ws('|', BROKER_CODE,CLIENT_ACCOUNT_CODE,SECURITY_CODE,LISTING_EXCHANGE,CORP_ACT_DATE)
           key_fields_hist: Transaction_ID
+      - dbt_utils.unique_combination_of_columns:      #-- Max one version (change) per run = one entry in the seed
+          combination_of_columns:
+            - CORP_ACT_HKEY
+            - INGESTION_TS_UTC
+      - dbt_utils.unique_combination_of_columns:      #-- Max one version (change) per run = one entry in the seed
+          combination_of_columns:
+            - Transaction_ID
+            - INGESTION_TS_UTC
 
     columns:
       - name: CORP_ACT_HKEY
         description: HKEY / PK is not null
         data_tests:
           - not_null
-          - unique    # This checks that the TX have no versions = are immutable
+          # - unique    # This would check that the TX have no versions = are immutable, but we can make fixes
       - name: Transaction_ID
         description: BK is not null
         data_tests:
           - not_null
-          - unique
+          # - unique    # This would check that the TX have no versions = are immutable, but we can make fixes
       - name: SECURITY_CODE
         description: Mandatory FK is not null
         data_tests:
