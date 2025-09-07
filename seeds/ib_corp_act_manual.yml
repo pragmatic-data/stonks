@@ -27,6 +27,9 @@ seeds:
       - dbt_utils.expression_is_true:
           arguments:
             expression: CASE WHEN QUANTITY > 0 THEN BUY_SELL = 'BUY' ELSE BUY_SELL = 'SELL' END
+      - dbt_utils.expression_is_true:
+          arguments:
+            expression: CASE WHEN TRANSACTION_TYPE = 'SPLIT' THEN OPEN_CLOSE_INDICATOR = 'O' END
 
     columns:
       - name: concat_ws('|', BROKER_CODE,CLIENT_ACCOUNT_CODE,SECURITY_CODE,LISTING_EXCHANGE,CORP_ACT_DATE)
