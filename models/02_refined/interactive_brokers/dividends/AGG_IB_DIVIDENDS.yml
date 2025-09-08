@@ -1,0 +1,15 @@
+unit_tests:
+  - name: test_dividend_aggregation_and_pivot_logic
+    model: AGG_IB_DIVIDENDS
+    given:
+      - input: ref('REFH_IB_DIVIDENDS')
+        rows:
+          - {POSITION_HKEY: 'div1', DIVIDEND_SETTLEMENT_DATE: '2024-06-10', TRANSACTION_TYPE: 'DIVIDEND', AMOUNT_IN_FX: 100.00}
+          - {POSITION_HKEY: 'div1', DIVIDEND_SETTLEMENT_DATE: '2024-06-10', TRANSACTION_TYPE: 'Withholding Tax', AMOUNT_IN_FX: -15.00}
+          - {POSITION_HKEY: 'div1', DIVIDEND_SETTLEMENT_DATE: '2024-06-10', TRANSACTION_TYPE: 'Other Fees', AMOUNT_IN_FX: -1.50}
+      - input: ref('MDD_DATE_CALENDAR')
+        rows: []
+
+    expect:
+      rows:
+        - {GROSS_DIVIDEND_RECIVED_IN_FX: 100.00, TAX_PAID_IN_FX: 15.00, COSTS_PAID_IN_FX: 1.50, NET_CASH_RECIVED_IN_FX: 83.50}
