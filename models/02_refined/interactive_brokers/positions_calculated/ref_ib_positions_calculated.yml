@@ -36,17 +36,17 @@ models:
           expression: | 
             CASE
               WHEN TRANSACTION_TYPE = 'SPLIT' THEN COST_BASIS_CHANGE_FX = 0
-              WHEN SIDE = 'Long' and OPEN_CLOSE_INDICATOR = 'O' THEN COST_BASIS_CHANGE_FX > 0
-              WHEN SIDE = 'Long' and OPEN_CLOSE_INDICATOR = 'C' THEN COST_BASIS_CHANGE_FX < 0
-              WHEN SIDE = 'Short' and OPEN_CLOSE_INDICATOR = 'O' THEN COST_BASIS_CHANGE_FX < 0
-              WHEN SIDE = 'Short' and OPEN_CLOSE_INDICATOR = 'C' THEN COST_BASIS_CHANGE_FX > 0
+              WHEN SIDE = 'Long' and OPEN_CLOSE_INDICATOR = 'O' THEN COST_BASIS_CHANGE_FX >= 0
+              WHEN SIDE = 'Long' and OPEN_CLOSE_INDICATOR = 'C' THEN COST_BASIS_CHANGE_FX <= 0
+              WHEN SIDE = 'Short' and OPEN_CLOSE_INDICATOR = 'O' THEN COST_BASIS_CHANGE_FX <= 0
+              WHEN SIDE = 'Short' and OPEN_CLOSE_INDICATOR = 'C' THEN COST_BASIS_CHANGE_FX >= 0
               ELSE COST_BASIS_CHANGE_FX = 0
             END
       - dbt_utils.expression_is_true: # Cost basis sign
           expression: | 
             CASE
-              WHEN SIDE = 'Long' THEN COST_BASIS_FX > 0
-              WHEN SIDE = 'Short' THEN COST_BASIS_FX < 0
+              WHEN SIDE = 'Long' THEN COST_BASIS_FX >= 0
+              WHEN SIDE = 'Short' THEN COST_BASIS_FX <= 0
               ELSE COST_BASIS_FX = 0
             END
       - dbt_utils.expression_is_true: # open or increase position
