@@ -62,8 +62,13 @@ models:
           combination_of_columns:
             - POSITION_HKEY
             - DIVIDEND_SETTLEMENT_DATE
-      - dbt_utils.expression_is_true:
+
+      - dbt_utils.expression_is_true: # precise, but works only for decimal number
           expression: NET_CASH_RECIVED_IN_FX + TAX_PAID_IN_FX + COSTS_PAID_IN_FX = GROSS_DIVIDEND_RECIVED_IN_FX
+
+      - dbt_utils.expression_is_true: # less pprecise, but works also for floating point number
+          expression: "abs(NET_CASH_RECIVED_IN_FX + TAX_PAID_IN_FX + COSTS_PAID_IN_FX - GROSS_DIVIDEND_RECIVED_IN_FX) < 0.01"
+
 
     columns:
       - name: NET_CASH_RECIVED_IN_FX
