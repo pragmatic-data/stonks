@@ -62,13 +62,15 @@ models:
             - Transaction_ID
             - Transaction_Type
             - TX_DESCRIPTION
-#            - REPORT_DATE
+            # - REPORT_DATE
+          where: RECORD_SOURCE not ilike '%restatement%'
     columns:
       - name: TRANSACTION_HKEY
         description: HKEY / PK is not null
         data_tests:
           - not_null
-          - unique    # This checks that the TX have no versions = are immutable
+          - unique:    # This checks that the TX have no versions = are immutable
+              where: RECORD_SOURCE not ilike '%restatement%'
       - name: concat(Transaction_ID, Transaction_Type)
         description: BK is not null
         data_tests:

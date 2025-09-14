@@ -1,0 +1,11 @@
+version: 2
+models:
+  - name: TS_IB_REPORTED_POSITIONS_DAILY_VALUES
+    data_tests:
+      - dbt_utils.unique_combination_of_columns:      #-- Max one version per effectivity date
+          combination_of_columns: 
+            - POSITION_HKEY
+            - position_value_date
+      - dbt_utils.expression_is_true:
+          expression: position_value_date = EFFECTIVITY_DATE
+      

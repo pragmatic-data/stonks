@@ -1,0 +1,65 @@
+WITH
+ib_dividends as (
+    SELECT * FROM {{ ref('REFH_IB_DIVIDENDS') }}
+)
+, calendar as (
+    SELECT * FROM {{ ref('MDD_DATE_CALENDAR') }}
+)
+, aggregated as (
+    SELECT
+        POSITION_HKEY, 
+
+        BROKER_CODE, 
+        CLIENT_ACCOUNT_CODE, 
+        ACCOUNT_ALIAS,
+        LISTING_EXCHANGE, 
+        DIM_SECURITY_SYMBOL,
+        SECURITY_CODE,
+        SECURITY_NAME,
+
+        DIVIDEND_SETTLEMENT_DATE,
+        CURRENCY_PRIMARY,
+
+        SUM(CASE WHEN TRANSACTION_TYPE NOT IN ('Withholding Tax', 'Other Fees') THEN AMOUNT_IN_FX ELSE 0 
+            END) as GROSS_DIVIDEND_RECIVED_IN_FX,
+        - SUM(CASE WHEN TRANSACTION_TYPE = 'Withholding Tax' THEN AMOUNT_IN_FX ELSE 0
+            END) as TAX_PAID_IN_FX,
+        - SUM(CASE WHEN TRANSACTION_TYPE = 'Other Fees' THEN AMOUNT_IN_FX ELSE 0
+            END) as COSTS_PAID_IN_FX,
+        SUM(AMOUNT_IN_FX) as NET_CASH_RECIVED_IN_FX,
+
+        AVG(FX_RATE_TO_BASE) as AVG_FX_RATE_TO_BASE,
+
+        SUM(CASE WHEN TRANSACTION_TYPE NOT IN ('Withholding Tax', 'Other Fees') THEN AMOUNT_IN_BASE ELSE 0 
+            END) as GROSS_DIVIDEND_RECIVED_IN_BASE,
+        - SUM(CASE WHEN TRANSACTION_TYPE = 'Withholding Tax' THEN AMOUNT_IN_BASE ELSE 0
+            END) as TAX_PAID_IN_BASE,
+        - SUM(CASE WHEN TRANSACTION_TYPE = 'Other Fees' THEN AMOUNT_IN_BASE ELSE 0
+            END) as COSTS_PAID_IN_BASE,
+        SUM(AMOUNT_IN_BASE) as NET_CASH_RECIVED_IN_BASE
+
+
+    FROM ib_dividends d
+    GROUP BY 
+        POSITION_HKEY, 
+        DIVIDEND_SETTLEMENT_DATE,
+
+        BROKER_CODE, 
+        CLIENT_ACCOUNT_CODE, 
+        ACCOUNT_ALIAS,
+        LISTING_EXCHANGE, 
+        DIM_SECURITY_SYMBOL,
+        SECURITY_CODE,
+        SECURITY_NAME,
+        CURRENCY_PRIMARY
+
+)
+
+SELECT agg.*
+    , month
+    , quarter
+    , year
+    , year_quarter
+FROM aggregated as agg
+LEFT OUTER JOIN calendar as cal ON(cal.date_day = agg.DIVIDEND_SETTLEMENT_DATE)
+ORDER BY ACCOUNT_ALIAS,DIM_SECURITY_SYMBOL, DIVIDEND_SETTLEMENT_DATE

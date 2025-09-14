@@ -81,7 +81,9 @@ models:
       interactive_brokers:
         +materialized: view
         +schema: ib_refined
-
+      master_data:
+        +materialized: table
+        +schema: md_refined
 seeds:
   stonks:
     +schema: seeds
