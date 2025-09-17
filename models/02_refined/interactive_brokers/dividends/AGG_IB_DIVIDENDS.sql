@@ -8,6 +8,7 @@ ib_dividends as (
 , aggregated as (
     SELECT
         POSITION_HKEY, 
+        DIM_SECURITY_HKEY as SECURITY_HKEY,
 
         BROKER_CODE, 
         CLIENT_ACCOUNT_CODE, 
@@ -41,7 +42,8 @@ ib_dividends as (
 
     FROM ib_dividends d
     GROUP BY 
-        POSITION_HKEY, 
+        POSITION_HKEY,
+        DIM_SECURITY_HKEY,
         DIVIDEND_SETTLEMENT_DATE,
 
         BROKER_CODE, 
