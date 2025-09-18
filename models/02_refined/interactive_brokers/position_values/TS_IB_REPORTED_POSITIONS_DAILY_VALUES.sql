@@ -26,6 +26,7 @@ base_table:
         - RECORD_SOURCE
         - INGESTION_TS_UTC
         - HIST_LOAD_TS_UTC
+        - VALUE_IS_CURRENT: IS_CURRENT
 
 #-- SYNTAX
 #-- BaseTable_column: JoinedTable_column

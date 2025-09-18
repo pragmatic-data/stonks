@@ -84,6 +84,12 @@ models:
       master_data:
         +materialized: table
         +schema: md_refined
+    03_delivery:
+      marts:
+        portfolio_analysis:
+          +materialized: table
+          +schema: mart_portfolio_analysis
+
 seeds:
   stonks:
     +schema: seeds
