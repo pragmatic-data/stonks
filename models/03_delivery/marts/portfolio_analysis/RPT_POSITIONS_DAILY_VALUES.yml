@@ -1,0 +1,211 @@
+models:
+- name: rpt_positions_daily_values
+  description: This model provides a comprehensive daily snapshot of reported positions,
+    including position changes, valuations, and associated metadata. It integrates
+    calendar dates with position data to facilitate time-based analysis of financial
+    positions.
+
+  data_tests:
+    - dbt_utils.unique_combination_of_columns:      #-- Max one version per effectivity date
+        combination_of_columns: 
+          - POSITION_HKEY
+          - calendar_date
+
+    - dbt_utils.expression_is_true:
+        expression: position_value = mark_price * quantity
+    - dbt_utils.expression_is_true:
+        expression: fifo_pnl_unrealized = position_value - COST_BASIS_MONEY
+
+  columns:
+  # Keys
+  - name: position_value_scd_hkey
+    description: Surrogate key for the position value.
+    data_tests:
+      - unique
+      - not_null
+  - name: portfolio_hkey
+    description: Hash key for the portfolio.
+  - name: position_hkey
+    description: Hash key for the position.
+  - name: position_scd_hkey
+    description: Surrogate key for the position.
+  - name: security_hkey
+    description: Hash key for the security.
+  - name: security_scd_hkey
+    description: Surrogate key for the security.
+  - name: broker_code
+    description: Code representing the broker.
+    data_tests:
+      - not_null
+  - name: client_account_code
+    description: Code for the client account.
+    data_tests:
+      - not_null
+  - name: listing_exchange
+    description: Exchange where the security is listed.
+    data_tests:
+      - not_null
+  - name: security_code
+    description: Code representing the security.
+    data_tests:
+      - not_null
+  - name: underlying_security_code
+    description: Code for the underlying security.
+
+  # Account & Security identification
+  - name: account_alias
+    description: Alias for the account associated with the position.
+    data_tests:
+      - not_null
+  - name: security_symbol
+    description: Symbol representing the security in the position.
+    data_tests:
+      - not_null
+  - name: security_name
+    description: Name of the security in the position.
+    data_tests:
+      - not_null
+  - name: asset_class
+    description: Classification of the asset type.
+    data_tests:
+      - not_null
+
+  # CALENDAR DATE 
+  - name: calendar_date
+    description: Date from the calendar used for time-based analysis.
+    data_tests:
+      - not_null
+
+  # Position 
+  - name: position_change_date
+    description: Date when the position change occurred.
+  - name: quantity
+    description: Number of units in the position.
+  - name: side
+    description: Indicates whether the position is a buy or sell.
+  - name: trading_currency
+    description: Currency in which the position is traded.
+
+  # Position valuation
+  - name: position_value_date
+    description: Date when the position value is recorded.
+  - name: adjusted_effectivity_date
+    description: Adjusted date for the effectivity of the position.
+  - name: cost_basis_price
+    description: Price used as the cost basis for the position.
+  - name: mark_price
+    description: Current market price of the security.
+  - name: cost_basis_money
+    description: Monetary value of the cost basis for the position.
+  - name: position_value
+    description: Total value of the position.
+  - name: percent_of_nav
+    description: Percentage of the position value relative to the net asset value.
+  - name: fifo_pnl_unrealized
+    description: Unrealized profit or loss using FIFO method.
+  - name: gain_pct_fx
+    description: Percentage gain from foreign exchange fluctuations.
+
+  # Calculation on NAV
+  - name: approx_side_NAV
+    description: Estimation of the portfolio NAV for the same side of the position.
+  - name: avg_long_NAV
+    description: Average of the estimations of the portfolio NAV for the Long positions.
+  - name: avg_short_NAV
+    description: Average of the estimations of the portfolio NAV for the Short positions.
+  - name: avg_net_NAV
+    description: Net value of Long and Short positions.
+      Algebric sum of the estimations of the portfolio NAV for Long and Short positions.
+  - name: avg_gross_NAV
+    description: The estimations of the sum of the abosulte NAV of all the positions.
+      Absolute sum of the estimations of the portfolio NAV for Long and Short positions.
+
+  # Option fields
+  - name: underlying_listing_exchange
+    description: Exchange where the underlying security is listed.
+  - name: underlying_symbol
+    description: Symbol of the underlying security.
+  - name: put_call
+    description: Indicates whether the option is a put or call.
+  - name: multiplier
+    description: Multiplier for the option contract.
+  - name: strike
+    description: Strike price of the option.
+  - name: expiry
+    description: Expiration date of the option.
+  - name: fx_rate_to_base
+    description: Foreign exchange rate to the base currency.
+  - name: position_value_base
+    description: Value of the position in the base currency.
+  - name: cost_basis_base_approx
+    description: Approximate cost basis in the base currency.
+  - name: gain_base
+    description: Gain in the base currency.
+
+  # Calendar based filters
+  - name: day
+    description: Day of the month from the calendar.
+  - name: day_name
+    description: Name of the day from the calendar.
+  - name: month
+    description: Month from the calendar.
+  - name: month_name
+    description: Name of the month from the calendar.
+  - name: quarter_number
+    description: Quarter number from the calendar.
+  - name: quarter
+    description: Quarter from the calendar.
+  - name: year
+    description: Year from the calendar.
+  - name: year_quarter
+    description: Year and quarter from the calendar.
+
+  # Metadata
+  - name: record_source
+    description: Source of the record data.
+  - name: ingestion_ts_utc
+    description: Timestamp when the data was ingested in UTC.
+  - name: hist_load_ts_utc
+    description: Historical load timestamp in UTC.
+  - name: position_value_version_number
+    description: Version number of the position value.
+  - name: adjusted_position_value_valid_from
+    description: Start date when the adjusted position value is valid.
+  - name: position_value_valid_from
+    description: Start date when the position value is valid.
+  - name: position_value_valid_to
+    description: End date when the position value is valid.
+  - name: value_is_current
+    description: Indicates if the value is current.
+  - name: position_effectivity_date
+    description: Effectivity date of the position.
+  - name: position_ingestion_ts_utc
+    description: Timestamp when the position data was ingested in UTC.
+  - name: position_hist_load_ts_utc
+    description: Historical load timestamp for the position in UTC.
+  - name: position_version_count
+    description: Count of versions for the position.
+  - name: position_version_number
+    description: Version number of the position.
+  - name: position_valid_from
+    description: Start date when the position is valid.
+  - name: position_valid_to
+    description: End date when the position is valid.
+  - name: position_is_current
+    description: Indicates if the position is current.
+  - name: security_effectivity_date
+    description: Effectivity date of the security.
+  - name: security_ingestion_ts_utc
+    description: Timestamp when the security data was ingested in UTC.
+  - name: security_hist_load_ts_utc
+    description: Historical load timestamp for the security in UTC.
+  - name: security_version_count
+    description: Count of versions for the security.
+  - name: security_version_number
+    description: Version number of the security.
+  - name: security_valid_from
+    description: Start date when the security is valid.
+  - name: security_valid_to
+    description: End date when the security is valid.
+  - name: security_is_current
+    description: Indicates if the security is current.
