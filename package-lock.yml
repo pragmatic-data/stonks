@@ -7,5 +7,5 @@ packages:
     revision: be6924c7ce9d49c8f3d1a206745a215a2a711398
   - git: https://github.com/pragmatic-data/pragmatic-data-platform.git
     name: pragmatic_data
-    revision: 29cb49807b60eb8cebf76ee31a41419c7161f563
-sha1_hash: b58cca8c9809e2b1eae5ba9c3c1b47db38ad6ac9
+    revision: a9dbbfc4f824cfafa2d6f79f424f67362f93d1d0
+sha1_hash: df4e0adabc669c80f13b06469c1db2bd1c25c4ac

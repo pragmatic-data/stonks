@@ -10,8 +10,7 @@ packages:
 
   # Pragmatic Data Platform package
   - git: https://github.com/pragmatic-data/pragmatic-data-platform.git
-    # revision: 0.4.10
-    revision: fix-scc
+    revision: 0.4.11
     #revision: main
 
 
