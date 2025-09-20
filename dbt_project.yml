@@ -73,6 +73,9 @@ vars:
 # Configuring models
 models:
   stonks:
+    +persist_docs:
+      relation: true
+      columns: true
     01_storage:
       interactive_brokers:
         +materialized: view
