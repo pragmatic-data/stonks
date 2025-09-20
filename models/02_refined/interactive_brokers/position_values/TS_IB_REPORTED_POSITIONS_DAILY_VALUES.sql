@@ -18,7 +18,7 @@ calculated_columns:
     - ADJUSTED_POSITION_VALUE_VALID_FROM: |
         CASE 
             WHEN bt.VERSION_NUMBER = 1 
-                THEN LEAST_IGNORE_NULLS(bt.VALID_FROM, t1.VALID_FROM, t2.VALID_FROM, '2021-01-01'::date)
+                THEN LEAST_IGNORE_NULLS(bt.VALID_FROM, t1.VALID_FROM, t2.VALID_FROM, '2021-01-01'::date)::date
             ELSE POSITION_VALUE_VALID_FROM
         END 
 
@@ -26,6 +26,11 @@ base_table:
     name: "{{ ref('VER_IB_ALL_POSITIONS_DAILY_VALUES') }}"
     include_all_columns: false
     columns:
+        - POSITION_VALUE_SCD_HKEY: DIM_SCD_HKEY
+        - POSITION_HKEY
+        - SECURITY_HKEY
+        # - PORTFOLIO_HKEY
+
         - position_value_date: REPORT_DATE
         - FX_RATE_TO_BASE
         - MARK_PRICE
@@ -55,8 +60,8 @@ joined_tables:
             POSITION_HKEY: POSITION_HKEY
 
         columns:
-        - POSITION_HKEY
-        - SECURITY_HKEY
+        # - POSITION_HKEY
+        # - SECURITY_HKEY
         - PORTFOLIO_HKEY
         - POSITION_SCD_HKEY: DIM_SCD_HKEY
 
