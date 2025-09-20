@@ -41,6 +41,11 @@ models:
           - relationships:
               to: ref('REFH_REPORTED_POSITIONS')
               field: POSITION_HKEY
+      - name: PORTFOLIO_HKEY
+        data_tests:
+          - relationships:
+              to: ref('REF_IB_PORTFOLIOS')
+              field: PORTFOLIO_HKEY
       - name: DIM_SECURITY_HKEY
         data_tests:
           - relationships:

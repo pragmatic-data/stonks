@@ -7,8 +7,11 @@ ib_dividends as (
 )
 , aggregated as (
     SELECT
+        PORTFOLIO_HKEY,
         POSITION_HKEY, 
+        POSITION_SCD_HKEY, 
         DIM_SECURITY_HKEY as SECURITY_HKEY,
+        SECURITY_SCD_HKEY, 
 
         BROKER_CODE, 
         CLIENT_ACCOUNT_CODE, 
@@ -42,9 +45,12 @@ ib_dividends as (
 
     FROM ib_dividends d
     GROUP BY 
+        PORTFOLIO_HKEY,
         POSITION_HKEY,
         DIM_SECURITY_HKEY,
         DIVIDEND_SETTLEMENT_DATE,
+        POSITION_SCD_HKEY, 
+        SECURITY_SCD_HKEY, 
 
         BROKER_CODE, 
         CLIENT_ACCOUNT_CODE, 

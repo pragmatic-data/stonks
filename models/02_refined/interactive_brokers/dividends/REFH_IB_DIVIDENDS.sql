@@ -37,6 +37,7 @@ base_table:
         - TRANSACTION_HKEY
         - TRANSACTION_HDIFF
         - POSITION_HKEY
+        - PORTFOLIO_HKEY
 
         #-- core metadata
         - EFFECTIVITY_DATE
@@ -53,6 +54,7 @@ joined_tables:
         join_columns: 
             SECURITY_CODE: SECURITY_CODE
         columns:
+            - SECURITY_SCD_HKEY: DIM_SCD_HKEY
             - SECURITY_NAME
             - LISTING_EXCHANGE
             - CONID
@@ -76,6 +78,7 @@ joined_tables:
         join_columns: 
             POSITION_HKEY: POSITION_HKEY
         columns:
+            - POSITION_SCD_HKEY: DIM_SCD_HKEY
             - POSITION_QUANTITY: quantity
             - SIDE
             - POSITION_CURRENCY_PRIMARY: CURRENCY_PRIMARY

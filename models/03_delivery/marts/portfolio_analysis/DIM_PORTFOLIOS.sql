@@ -1,7 +1,7 @@
 with
 portfolio_base_dim as (
     select *
-    from {{ ref('REF_PORTFOLIOS') }}
+    from {{ ref('REF_IB_PORTFOLIOS') }}
 )
 
 , portfolio_position_stats as (
