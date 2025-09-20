@@ -7,7 +7,12 @@ ib_dividends as (
 )
 , aggregated as (
     SELECT
+        {{ pragmatic_data.pdp_hash(['BROKER_CODE','CLIENT_ACCOUNT_CODE','SECURITY_CODE','LISTING_EXCHANGE','DIVIDEND_SETTLEMENT_DATE']) }} as DIVIDEND_HKEY,
+        PORTFOLIO_HKEY,
         POSITION_HKEY, 
+        POSITION_SCD_HKEY, 
+        DIM_SECURITY_HKEY as SECURITY_HKEY,
+        SECURITY_SCD_HKEY, 
 
         BROKER_CODE, 
         CLIENT_ACCOUNT_CODE, 
@@ -41,8 +46,12 @@ ib_dividends as (
 
     FROM ib_dividends d
     GROUP BY 
-        POSITION_HKEY, 
+        PORTFOLIO_HKEY,
+        POSITION_HKEY,
+        DIM_SECURITY_HKEY,
         DIVIDEND_SETTLEMENT_DATE,
+        POSITION_SCD_HKEY, 
+        SECURITY_SCD_HKEY, 
 
         BROKER_CODE, 
         CLIENT_ACCOUNT_CODE, 

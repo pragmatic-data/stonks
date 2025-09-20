@@ -1,0 +1,11 @@
+version: 2
+models:
+  - name: REF_PORTFOLIOS
+    description: The portfolios found in our facts
+    columns:
+      - name: portfolio_hkey
+        description: the unique key for a portfolio
+        data_type: binary
+        data_tests:
+          - not_null
+          - unique

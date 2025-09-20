@@ -1,0 +1,82 @@
+models:
+- name: DIM_SECURITIES
+  description: This model provides current data for securities.
+    It is designed to support analysis of security-related events and transactions.
+  
+  columns:
+  - name: security_scd_hkey
+    description: Version PK. A unique binary key for the row's specific version of the security.
+      This is the unique Key of this slowly changing dimension table.
+    data_tests:
+      - unique
+      - not_null
+  - name: security_hkey
+    description: Record PK. A unique binary key identifying each security.
+      This is a unique PK in this table, as a security has a single current version.
+    data_tests:
+      - unique
+      - not_null
+
+  - name: listing_exchange
+    description: BK. The exchange where the security is listed. Part of the HKEY.
+    data_tests:
+      - not_null
+  - name: security_code
+    description: BK. The code identifying the security. Part of the HKEY.
+    data_tests:
+      - not_null
+  - name: security_symbol
+    description: |
+      NK. The symbol representing the security. 
+      This is a quite problematic key in a DWH context, as it is unique in a single exchange and can very over time.
+      Nevertheless is very important as it is widely used by users, as overlapping of big names are infrequent.
+    data_tests:
+      - not_null
+  - name: security_name
+    description: The name of the security.
+    data_tests:
+      - not_null
+  - name: currency_primary
+    description: The primary currency in which the security is traded.
+    data_tests:
+      - not_null
+
+  - name: effectivity_date
+    description: The date when this version of the security becomes effective.
+    data_tests:
+      - not_null
+  - name: report_date
+    description: The date and time when the report was generated.
+    data_tests:
+      - not_null
+
+  - name: asset_class
+    description: The class of the asset, such as equity or bond.
+  - name: issuer
+    description: The issuer of the security.
+  - name: isin
+    description: The International Securities Identification Number for the security.
+  - name: cusip
+    description: The Committee on Uniform Securities Identification Procedures number
+      for the security.
+  - name: conid
+    description: The contract identifier for the security.
+  - name: principal_adjust_factor
+    description: The factor used to adjust the principal value of the security.
+
+  - name: underlying_listing_exchange
+    description: The exchange where the underlying security is listed.
+  - name: underlying_security_code
+    description: The code for the underlying security.
+  - name: underlying_symbol
+    description: The symbol representing the underlying security.
+  - name: underlying_conid
+    description: The contract identifier for the underlying security.
+  - name: put_call
+    description: Indicates whether the security is a put or a call option.
+  - name: multiplier
+    description: The multiplier applied to the security's value.
+  - name: strike
+    description: The strike price of the security.
+  - name: expiry
+    description: The expiration date of the security.

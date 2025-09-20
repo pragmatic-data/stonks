@@ -9,11 +9,28 @@ calculated_columns:
     - position_value_base: bt.position_value * bt.fx_rate_to_base
     - UNDERLYING_SYMBOL: COALESCE(t2.UNDERLYING_SYMBOL, t2.SECURITY_SYMBOL)
     - UNDERLYING_LISTING_EXCHANGE: COALESCE(t2.UNDERLYING_LISTING_EXCHANGE, t2.LISTING_EXCHANGE)
+    - ADJUSTED_EFFECTIVITY_DATE: |
+        CASE 
+            WHEN bt.VERSION_NUMBER = 1
+                THEN LEAST_IGNORE_NULLS(bt.EFFECTIVITY_DATE, t1.EFFECTIVITY_DATE, t2.EFFECTIVITY_DATE, '2021-01-01'::date)
+            ELSE bt.EFFECTIVITY_DATE 
+        END
+    - ADJUSTED_POSITION_VALUE_VALID_FROM: |
+        CASE 
+            WHEN bt.VERSION_NUMBER = 1 
+                THEN LEAST_IGNORE_NULLS(bt.VALID_FROM, t1.VALID_FROM, t2.VALID_FROM, '2021-01-01'::date)::date
+            ELSE POSITION_VALUE_VALID_FROM
+        END 
 
 base_table:
     name: "{{ ref('VER_IB_ALL_POSITIONS_DAILY_VALUES') }}"
     include_all_columns: false
     columns:
+        - POSITION_VALUE_SCD_HKEY: DIM_SCD_HKEY
+        - POSITION_HKEY
+        - SECURITY_HKEY
+        # - PORTFOLIO_HKEY
+
         - position_value_date: REPORT_DATE
         - FX_RATE_TO_BASE
         - MARK_PRICE
@@ -26,6 +43,10 @@ base_table:
         - RECORD_SOURCE
         - INGESTION_TS_UTC
         - HIST_LOAD_TS_UTC
+        - POSITION_VALUE_VERSION_NUMBER: VERSION_NUMBER
+        - POSITION_VALUE_VALID_FROM: VALID_FROM
+        - POSITION_VALUE_VALID_TO: VALID_TO
+        - VALUE_IS_CURRENT: IS_CURRENT
 
 #-- SYNTAX
 #-- BaseTable_column: JoinedTable_column
@@ -39,10 +60,10 @@ joined_tables:
             POSITION_HKEY: POSITION_HKEY
 
         columns:
-        - POSITION_HKEY
-        - SECURITY_HKEY
+        # - POSITION_HKEY
+        # - SECURITY_HKEY
         - PORTFOLIO_HKEY
-        - POSITION_VERSION_HKEY: DIM_SCD_HKEY
+        - POSITION_SCD_HKEY: DIM_SCD_HKEY
 
         - CLIENT_ACCOUNT_CODE
         - BROKER_CODE
@@ -76,6 +97,7 @@ joined_tables:
         join_columns: 
             SECURITY_HKEY: SECURITY_HKEY
         columns:
+            - SECURITY_SCD_HKEY
             - SECURITY_NAME
             - ASSET_CLASS 
             - PUT_CALL 
