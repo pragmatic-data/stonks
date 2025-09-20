@@ -16,7 +16,9 @@ ver_positions as (
  */
 , fix_first_effectivity_date as (
     SELECT 
-        p.* EXCLUDE (EFFECTIVITY_DATE, VALID_FROM),
+        p.* 
+            EXCLUDE (EFFECTIVITY_DATE, VALID_FROM)
+            RENAME (DIM_SCD_HKEY as POSITION_SCD_HKEY),
         
         TRY_TO_DATE(SUBSTR(RIGHT(RECORD_SOURCE, 24), 1, 8), 'YYYYMMDD') as EXTRACTION_PERIOD_START,
         TRY_TO_DATE(SUBSTR(RIGHT(RECORD_SOURCE, 24), 10, 8), 'YYYYMMDD') as EXTRACTION_PERIOD_END,

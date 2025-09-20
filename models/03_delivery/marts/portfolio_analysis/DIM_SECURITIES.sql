@@ -1,23 +1,42 @@
-{% set configuration %}
-fact_defs:
-  - 'model': 'TS_IB_REPORTED_POSITIONS_DAILY_VALUES' 
-    'key': 'SECURITY_HKEY'
-  - 'model': 'AGG_IB_DIVIDENDS' 
-    'key': 'SECURITY_HKEY'
-{% endset %}
-{%- set cfg = fromyaml(configuration) -%}
+SELECT
+    SECURITY_SCD_HKEY
+    , SECURITY_HKEY
 
-{# As an alternative you could define the `fact_defs` as a Python dictionary, like this:
-    [ {'model': 'TS_IB_REPORTED_POSITIONS_DAILY_VALUES', 'key': 'SECURITY_HKEY'},
-      {'model': 'AGG_IB_DIVIDENDS', 'key': 'SECURITY_HKEY'}
-    ]    
- #}
+    , LISTING_EXCHANGE
+    , SECURITY_CODE
+    , SECURITY_SYMBOL
+    , SECURITY_NAME
+    , CURRENCY_PRIMARY
 
-{{ pragmatic_data.self_completing_dimension(
-    dim_rel = ref('REFH_IB_SECURITIES'),
-    dim_key_column  = 'SECURITY_HKEY',
-    dim_default_key_value = '-1',
-    ref_columns_to_exclude = [],
+    , EFFECTIVITY_DATE
+    , REPORT_DATE
 
-    fact_defs = cfg.fact_defs
-) }}
+    , ASSET_CLASS
+    , ISSUER
+    , ISIN
+    , CUSIP
+    , CONID
+    , PRINCIPAL_ADJUST_FACTOR
+
+    , UNDERLYING_LISTING_EXCHANGE
+    , UNDERLYING_SECURITY_CODE
+    , UNDERLYING_SYMBOL
+    , UNDERLYING_CONID
+    , PUT_CALL
+    , MULTIPLIER
+    , STRIKE
+    , EXPIRY
+
+/*
+    , BROKER_CODE
+    , INGESTION_TS_UTC
+    , HIST_LOAD_TS_UTC
+    , RECORD_SOURCE
+
+    , VALID_FROM
+    , VALID_TO
+    , IS_CURRENT
+*/
+
+FROM {{ ref('SCD_SECURITIES') }}
+WHERE IS_CURRENT
