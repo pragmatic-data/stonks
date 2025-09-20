@@ -1,0 +1,79 @@
+models:
+- name: FACT_POSITION_TRANSACTIONS
+  description: This model captures detailed information about position transactions,
+    including transaction identifiers, security details, and financial metrics. It
+    is used to analyze trading activities, calculate trade prices and gains or losses,
+    and track transaction history for portfolio management.
+  columns:
+  - name: transaction_hkey
+    description: PK. A unique hash key for the transaction.
+    data_tests:
+      - unique
+      - not_null
+  - name: transaction_id
+    description: BK. The unique identifier for the transaction.
+    data_tests:
+      - unique
+      - not_null
+  - name: portfolio_hkey
+    description: FK. A unique hash key for the portfolio.
+    data_tests:
+      - not_null
+  - name: security_hkey
+    description: FK. A unique hash key for the security.
+    data_tests:
+      - not_null
+  - name: position_hkey
+    description: FK. A unique hash key for the position.
+    data_tests:
+      - not_null
+  - name: transaction_type
+    description: The type of transaction, such as buy or sell.
+  - name: transaction_ts
+    description: The timestamp when the transaction occurred.
+  - name: broker_code
+    description: The code representing the broker involved in the transaction.
+  - name: client_account_code
+    description: The code for the client's account.
+  - name: account_alias
+    description: An alias for the account involved in the transaction.
+  - name: listing_exchange
+    description: The exchange where the security is listed.
+  - name: security_code
+    description: The code representing the security.
+  - name: security_symbol
+    description: The symbol of the security.
+  - name: security_name
+    description: The name of the security.
+  - name: asset_class
+    description: The class of the asset, such as equity or bond.
+  - name: effectivity_date
+    description: The date when the transaction becomes effective.
+  - name: buy_sell
+    description: Indicates whether the transaction is a buy or sell.
+  - name: quantity
+    description: The quantity of securities involved in the transaction.
+  - name: tx_money_fx
+    description: The transaction amount in foreign currency.
+  - name: currency_primary
+    description: The primary currency used in the transaction.
+  - name: fx_rate_to_base
+    description: The foreign exchange rate to the base currency.
+  - name: tx_money_base
+    description: The transaction amount in the base currency.
+  - name: cost_basis_fx_change
+    description: The change in cost basis in foreign currency.
+  - name: open_close_indicator
+    description: Indicates whether the position is open or closed.
+  - name: notes_codes
+    description: Codes for any notes associated with the transaction.
+  - name: trade_price_fx
+    description: The price per unit of security in foreign currency.
+  - name: trade_gain_loss_fx
+    description: The gain or loss from the trade in foreign currency.
+  - name: record_source
+    description: The source of the transaction record.
+  - name: ingestion_ts_utc
+    description: The timestamp when the transaction was ingested, in UTC.
+  - name: hist_load_ts_utc
+    description: The timestamp when the historical data was loaded, in UTC.
