@@ -34,6 +34,9 @@ ver_security as (
                  THEN coalesce(EXTRACTION_PERIOD_START, '2021-01-01'::date) ELSE VALID_FROM END
             as VALID_FROM
         )
+        RENAME (
+            DIM_SCD_HKEY as SECURITY_SCD_HKEY
+        )
     FROM ver_security
 )
 

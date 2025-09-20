@@ -43,7 +43,7 @@ joined_tables:
         - POSITION_HKEY
         - SECURITY_HKEY
         - PORTFOLIO_HKEY
-        - POSITION_VERSION_HKEY: DIM_SCD_HKEY
+        - POSITION_SCD_HKEY: DIM_SCD_HKEY
 
         - CLIENT_ACCOUNT_CODE
         - BROKER_CODE
@@ -77,6 +77,7 @@ joined_tables:
         join_columns: 
             SECURITY_HKEY: SECURITY_HKEY
         columns:
+            - SECURITY_SCD_HKEY
             - SECURITY_NAME
             - ASSET_CLASS 
             - PUT_CALL 

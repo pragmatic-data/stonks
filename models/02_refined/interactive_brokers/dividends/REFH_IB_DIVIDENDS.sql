@@ -54,7 +54,7 @@ joined_tables:
         join_columns: 
             SECURITY_CODE: SECURITY_CODE
         columns:
-            - SECURITY_SCD_HKEY: DIM_SCD_HKEY
+            - SECURITY_SCD_HKEY
             - SECURITY_NAME
             - LISTING_EXCHANGE
             - CONID
