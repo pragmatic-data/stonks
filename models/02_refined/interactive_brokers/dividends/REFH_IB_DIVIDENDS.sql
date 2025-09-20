@@ -78,7 +78,7 @@ joined_tables:
         join_columns: 
             POSITION_HKEY: POSITION_HKEY
         columns:
-            - POSITION_SCD_HKEY: DIM_SCD_HKEY
+            - POSITION_SCD_HKEY
             - POSITION_QUANTITY: quantity
             - SIDE
             - POSITION_CURRENCY_PRIMARY: CURRENCY_PRIMARY
