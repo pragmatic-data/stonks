@@ -1,0 +1,30 @@
+version: 2
+
+exposures:
+  - name: portfolio_analysis_mart
+    type: dashboard
+    maturity: high
+    owner:
+      name: Roberto Zagni
+      email: info@pragmatic-data.org
+
+    label: "STONKS - Portfolio Analysis Data Mart"
+
+    description: |
+      #### Portfolio Analysis Data Mart
+      This data mart provides a comprehensive, user-friendly view of portfolio performance. It is structured using dimensional modeling principles to be intuitive for BI tools and analysts.
+
+      **Key Data Products Included:**
+      - **Dimensions:** `DIM_PORTFOLIOS`, `DIM_SECURITIES` (current state), `SCD_SECURITIES` (full history), and `DIM_DATE`.
+      - **Facts:** `FACT_POSITION_TRANSACTIONS` (all position-altering events) and `FACT_DIVIDENDS` (all dividend payments).
+      - **Reports:** `RPT_POSITIONS_DAILY_VALUES` (a denormalized daily time series) and `RPT_POSITIONS_CURRENT_VALUES` (a snapshot of current holdings).
+
+    depends_on:
+      - ref('DIM_PORTFOLIOS')
+      - ref('DIM_SECURITIES')
+      - ref('SCD_SECURITIES')
+      - ref('DIM_DATE')
+      - ref('FACT_POSITION_TRANSACTIONS')
+      - ref('FACT_DIVIDENDS')
+      - ref('RPT_POSITIONS_DAILY_VALUES')
+      - ref('RPT_POSITIONS_CURRENT_VALUES')

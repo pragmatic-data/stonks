@@ -129,12 +129,33 @@ models:
     description: The year and quarter of the dividend transaction.
 
   - name: portfolio_hkey
-    description: A hash key for the portfolio record.
+    description: FK. A unique hash key for the portfolio record.
+    data_tests:
+      - not_null
+      - relationships:
+          field: portfolio_hkey
+          to: ref('DIM_PORTFOLIOS')
   - name: position_hkey
-    description: A hash key for the position record.
-  - name: position_scd_hkey
-    description: A hash key for the slowly changing dimension of the position.
+    description: FK. A unique hash key for the position record.
+    data_tests:
+      - not_null
+      - relationships:
+          field: position_hkey
+          to: ref('RPT_POSITIONS_DAILY_VALUES')
   - name: security_hkey
-    description: A hash key for the security record.
+    description: FK. A unique hash key for the security record.
+    data_tests:
+      - not_null
+      - relationships:
+          field: security_hkey
+          to: ref('DIM_SECURITIES')
   - name: security_scd_hkey
     description: A hash key for the slowly changing dimension of the security.
+    data_tests:
+      - not_null
+      - relationships:
+          field: security_scd_hkey
+          to: ref('SCD_SECURITIES')
+
+  - name: position_scd_hkey
+    description: A hash key for the slowly changing dimension of the position.
