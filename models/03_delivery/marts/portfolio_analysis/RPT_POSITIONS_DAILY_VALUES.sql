@@ -80,7 +80,12 @@ SELECT
     , c.QUARTER
     , c.YEAR
     , c.YEAR_QUARTER
-
+    , c.FIRST_DAY_OF_WEEK
+    , c.LAST_DAY_OF_WEEK
+    , c.FIRST_DAY_OF_MONTH
+    , c.LAST_DAY_OF_MONTH
+    , c.FIRST_DAY_OF_QUARTER
+    , c.LAST_DAY_OF_QUARTER
 
     -- metadata 
     , v.RECORD_SOURCE

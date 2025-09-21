@@ -159,6 +159,18 @@ models:
     description: Year from the calendar.
   - name: year_quarter
     description: Year and quarter from the calendar.
+  - name: first_day_of_week
+    description: the date of the first day of the week, for the calendar day.
+  - name: last_day_of_week
+    description: the date of the last day of the week, for the calendar day.
+  - name: first_day_of_month
+    description: the date of the first day of the month, for the calendar day.
+  - name: last_day_of_month
+    description: the date of the last day of the month, for the calendar day.
+  - name: first_day_of_quarter
+    description: the date of the first day of the quarter, for the calendar day.
+  - name: last_day_of_quarter
+    description: the date of the last day of the quarter, for the calendar day.
 
   # Metadata
   - name: record_source

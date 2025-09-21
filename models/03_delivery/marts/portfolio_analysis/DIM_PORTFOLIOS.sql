@@ -16,6 +16,7 @@ portfolio_base_dim as (
     group by portfolio_hkey
 )
 
+/* NOTE - Metics should not be in dimesions for the general public, it's risky. */ 
 , portfolio_daily_value_stats as (
     select
         portfolio_hkey
