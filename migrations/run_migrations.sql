@@ -11,10 +11,10 @@
 ) -%}
 
 {#
-{% do log("No migrations to run.", info=True) %}
-#}
-
 {% do run_migration('V004_alter_storage_ib_schema', database, schema_prefix) %}
+#}
+{% do log("No migrations to run.", info=True) %}
+
 
 {%- endmacro %}
 
