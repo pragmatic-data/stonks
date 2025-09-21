@@ -19,14 +19,23 @@ models:
     description: FK. A unique hash key for the portfolio.
     data_tests:
       - not_null
+      - relationships:
+          field: portfolio_hkey
+          to: ref('DIM_PORTFOLIOS')
   - name: security_hkey
     description: FK. A unique hash key for the security.
     data_tests:
       - not_null
+      - relationships:
+          field: security_hkey
+          to: ref('DIM_SECURITIES')
   - name: position_hkey
     description: FK. A unique hash key for the position.
     data_tests:
       - not_null
+      - relationships:
+          field: position_hkey
+          to: ref('RPT_POSITIONS_DAILY_VALUES')
   - name: transaction_type
     description: The type of transaction, such as buy or sell.
   - name: transaction_ts
