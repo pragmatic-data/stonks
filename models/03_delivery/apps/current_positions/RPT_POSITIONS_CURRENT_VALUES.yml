@@ -4,6 +4,10 @@ models:
     market value, cost basis, and gains in both trading and base currencies. It is
     used to assess the current financial status of positions, excluding closed positions,
     as of the current date.
+
+  config:
+    contract: {enforced: true}
+
   data_tests:
     - dbt_utils.unique_combination_of_columns:      #-- Max one version per effectivity date
         combination_of_columns: 

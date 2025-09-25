@@ -27,4 +27,3 @@ exposures:
       - ref('FACT_POSITION_TRANSACTIONS')
       - ref('FACT_DIVIDENDS')
       - ref('RPT_POSITIONS_DAILY_VALUES')
-      - ref('RPT_POSITIONS_CURRENT_VALUES')
