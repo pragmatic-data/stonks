@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stonks dbt Project Analysis</title>
+    <!-- Chosen Palette: Subtle Amber -->
+    <!-- Application Structure Plan: A two-panel SPA. Left panel is a fixed, scroll-spying navigation sidebar mirroring the report's hierarchy. Right panel displays the content in corresponding sections. This structure provides immediate context and easy, non-linear exploration, which is ideal for a technical document where users may want to jump between layers or specific models. An interactive architectural diagram at the top provides a visual entry point. -->
+    <!-- Visualization & Content Choices: Report Info: PDP Architecture -> Goal: Organize/Navigate -> Presentation: Interactive HTML/CSS Diagram -> Interaction: Clicks scroll to section. Justification: Visual overview improves understanding of the platform's flow. | Report Info: STG->HIST->VER Pattern -> Goal: Explain -> Presentation: Reusable HTML/CSS Diagram -> Interaction: Static visual aid. Justification: Clarifies the core, repeated storage pattern more effectively than text alone. | Report Info: Model Names/Keywords -> Goal: Inform -> Presentation: Styled `<code>` tags -> Justification: Improves readability by visually separating code elements from descriptive text. NO Chart.js/Plotly as the source is textual analysis, not quantitative data. -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Roboto+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #FDFBF7;
+            color: #4A4A4A;
+        }
+        code {
+            font-family: 'Roboto Mono', monospace;
+            background-color: #F3F4F6;
+            color: #B55B01;
+            padding: 0.125rem 0.25rem;
+            border-radius: 0.25rem;
+            font-size: 0.875em;
+        }
+        a code {
+            text-decoration: underline;
+            text-decoration-color: #FDBA74;
+            transition: all 0.2s;
+        }
+        a:hover code {
+            background-color: #FDEEDC;
+            text-decoration-color: #B55B01;
+        }
+        .nav-link.active {
+            background-color: #FDEEDC;
+            color: #B55B01;
+            font-weight: 600;
+        }
+        .prose-headings h2, .prose-headings h3 {
+            scroll-margin-top: 80px;
+        }
+    </style>
+</head>
+<body class="bg-amber-50">
+
+    <div class="flex">
+        <aside class="fixed top-0 left-0 w-64 h-full bg-white border-r border-gray-200 overflow-y-auto hidden lg:block">
+            <div class="p-6">
+                <h1 class="text-xl font-bold text-amber-800">Stonks Project Analysis</h1>
+            </div>
+            <nav id="desktop-nav" class="px-4">
+                <ul class="space-y-2">
+                    <li><a href="#introduction" class="nav-link block px-4 py-2 text-sm text-gray-700 rounded-md hover:bg-amber-100">Introduction</a></li>
+                    <li><a href="#layers" class="nav-link block px-4 py-2 text-sm text-gray-700 rounded-md hover:bg-amber-100">Layer Overview</a></li>
+                    <li><a href="#detailed-analysis" class="nav-link block px-4 py-2 text-sm text-gray-700 rounded-md hover:bg-amber-100">Detailed Model Analysis</a>
+                        <ul class="mt-2 pl-4 space-y-2 border-l border-gray-200">
+                           <li><a href="#ingestion-layer-detail" class="nav-link block px-4 py-2 text-xs text-gray-500 rounded-md hover:bg-amber-100">1. Ingestion Layer</a></li>
+                           <li><a href="#storage-layer-detail" class="nav-link block px-4 py-2 text-xs text-gray-500 rounded-md hover:bg-amber-100">2. Storage Layer</a></li>
+                           <li><a href="#refined-layer-detail" class="nav-link block px-4 py-2 text-xs text-gray-500 rounded-md hover:bg-amber-100">3. Refined Layer</a></li>
+                           <li><a href="#delivery-layer-detail" class="nav-link block px-4 py-2 text-xs text-gray-500 rounded-md hover:bg-amber-100">4. Delivery Layer</a></li>
+                        </ul>
+                    </li>
+                </ul>
+            </nav>
+        </aside>
+
+        <button id="menu-toggle" class="lg:hidden fixed top-4 left-4 z-20 p-2 bg-white rounded-md shadow-md">
+            <i class="fas fa-bars text-amber-800"></i>
+        </button>
+
+        <div id="mobile-nav" class="fixed top-0 left-0 w-64 h-full bg-white border-r border-gray-200 overflow-y-auto z-10 transform -translate-x-full transition-transform duration-300 ease-in-out">
+            <div class="p-6">
+                 <h1 class="text-xl font-bold text-amber-800">Stonks Project Analysis</h1>
+            </div>
+             <nav class="px-4">
+                <ul class="space-y-2">
+                    <li><a href="#introduction" class="nav-link block px-4 py-2 text-sm text-gray-700 rounded-md hover:bg-amber-100">Introduction</a></li>
+                    <li><a href="#layers" class="nav-link block px-4 py-2 text-sm text-gray-700 rounded-md hover:bg-amber-100">Layer Overview</a></li>
+                    <li><a href="#detailed-analysis" class="nav-link block px-4 py-2 text-sm text-gray-700 rounded-md hover:bg-amber-100">Detailed Model Analysis</a>
+                        <ul class="mt-2 pl-4 space-y-2 border-l border-gray-200">
+                           <li><a href="#ingestion-layer-detail" class="nav-link block px-4 py-2 text-xs text-gray-500 rounded-md hover:bg-amber-100">1. Ingestion Layer</a></li>
+                           <li><a href="#storage-layer-detail" class="nav-link block px-4 py-2 text-xs text-gray-500 rounded-md hover:bg-amber-100">2. Storage Layer</a></li>
+                           <li><a href="#refined-layer-detail" class="nav-link block px-4 py-2 text-xs text-gray-500 rounded-md hover:bg-amber-100">3. Refined Layer</a></li>
+                           <li><a href="#delivery-layer-detail" class="nav-link block px-4 py-2 text-xs text-gray-500 rounded-md hover:bg-amber-100">4. Delivery Layer</a></li>
+                        </ul>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+
+
+        <main class="lg:ml-64 p-6 sm:p-8 md:p-12 w-full prose-headings">
+            <div class="max-w-4xl mx-auto">
+
+                <section id="introduction">
+                    <h2 class="text-3xl font-bold text-amber-900 border-b-2 border-amber-200 pb-2">Introduction</h2>
+                    <p class="mt-4 text-lg">The "Stonks" project serves as the primary, hands-on case study for the book "Building a Pragmatic Data Platform with dbt and Snowflake." It brings the Pragmatic Data Platform (PDP) architecture to life with a complete, working sample implementation. While simplified for educational purposes, it is realistic enough to demonstrate how the principles and patterns discussed throughout the book translate into a real-world data engineering project.</p>
+                    <p>The project simulates a common scenario: analyzing personal investment data from a financial brokerage, in this case, Interactive Brokers (IB). It ingests raw data from CSV files containing trades, cash transactions, positions, and other financial activities. It then transforms this data through the PDP layers to ultimately produce a <code>portfolio_analysis</code> data mart, ready for consumption by BI tools or other data applications.</p>
+                    <p>By following the project's development, the reader can see firsthand how to:</p>
+                    <ul class="list-disc pl-5 mt-4 space-y-2">
+                        <li>Structure a dbt project according to PDP principles.</li>
+                        <li>Use the custom macros from the PDP dbt package to automate common, complex tasks.</li>
+                        <li>Implement robust data storage patterns that ensure auditability and maintain a complete history.</li>
+                        <li>Apply sophisticated business logic in a structured and maintainable way.</li>
+                        <li>Build user-centric, reliable data products in the form of dimensional models.</li>
+                    </ul>
+                </section>
+
+                <section id="layers" class="mt-12">
+                     <h2 class="text-3xl font-bold text-amber-900 border-b-2 border-amber-200 pb-2">PDP Layers Overview</h2>
+                     <p class="mt-4 text-lg">The Stonks project is organized into the distinct layers of the Pragmatic Data Platform. The diagram below shows the flow of data through these layers. Click on any layer to jump to its detailed description.</p>
+                     
+                     <div class="mt-8 p-4 bg-white rounded-lg shadow-md">
+                         <div class="flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0 md:space-x-4">
+                            <a href="#ingestion-layer-overview" class="flex-1 text-center p-4 bg-amber-100 rounded-lg hover:bg-amber-200 transition-colors">
+                                <i class="fas fa-download text-2xl text-amber-700"></i>
+                                <h4 class="font-semibold mt-2">1. Ingestion Layer</h4>
+                                <p class="text-xs text-gray-600">Automated Gateway</p>
+                            </a>
+                            <div class="text-2xl text-gray-400"><i class="fas fa-arrow-right"></i></div>
+                            <a href="#storage-layer-overview" class="flex-1 text-center p-4 bg-sky-100 rounded-lg hover:bg-sky-200 transition-colors">
+                                <i class="fas fa-database text-2xl text-sky-700"></i>
+                                <h4 class="font-semibold mt-2">2. Storage Layer</h4>
+                                <p class="text-xs text-gray-600">Stable Foundation</p>
+                            </a>
+                            <div class="text-2xl text-gray-400"><i class="fas fa-arrow-right"></i></div>
+                             <a href="#refined-layer-overview" class="flex-1 text-center p-4 bg-teal-100 rounded-lg hover:bg-teal-200 transition-colors">
+                                <i class="fas fa-blender text-2xl text-teal-700"></i>
+                                <h4 class="font-semibold mt-2">3. Refined Layer</h4>
+                                <p class="text-xs text-gray-600">Business-Centric Info</p>
+                            </a>
+                             <div class="text-2xl text-gray-400"><i class="fas fa-arrow-right"></i></div>
+                            <a href="#delivery-layer-overview" class="flex-1 text-center p-4 bg-indigo-100 rounded-lg hover:bg-indigo-200 transition-colors">
+                                <i class="fas fa-chart-pie text-2xl text-indigo-700"></i>
+                                <h4 class="font-semibold mt-2">4. Delivery Layer</h4>
+                                <p class="text-xs text-gray-600">Data Products</p>
+                            </a>
+                         </div>
+                     </div>
+
+                    <div id="ingestion-layer-overview" class="prose-headings mt-8 p-6 bg-white rounded-lg shadow-sm">
+                        <h3 class="text-xl font-bold text-amber-800">1. Ingestion Layer: The Automated Gateway</h3>
+                        <p>As detailed in Chapters 8 and 9, this layer is handled by operational macros in the <code><a href="./ingestion/" target="_blank" rel="noopener noreferrer">ingestion/</a></code> directory. It's responsible for getting raw data from source systems into the data platform's landing zone in Snowflake.</p>
+                        <ul class="list-disc pl-5 mt-4 space-y-2">
+                            <li><strong>Infrastructure as Code:</strong> The <code><a href="./ingestion/land_interactive_brokers/setup_interactive_brokers.sql" target="_blank" rel="noopener noreferrer">setup_interactive_brokers.sql</a></code> script uses the <code>pragmatic_data.inout_setup_sql</code> macro to define and create all necessary Snowflake objects from a YAML config, ensuring a repeatable, version-controlled environment.</li>
+                            <li><strong>Pattern-Based Ingestion:</strong> Each <code><a href="./ingestion/land_interactive_brokers/" target="_blank" rel="noopener noreferrer">load_IB_....sql</a></code> script wraps the <code>pragmatic_data.run_CSV_ingestion</code> macro, demonstrating a powerful, configuration-driven playbook that dramatically reduces boilerplate code.</li>
+                            <li><strong>Operational Control:</strong> The <code><a href="./ingestion/land_interactive_brokers/load_all_IB.sql" target="_blank" rel="noopener noreferrer">load_all_IB.sql</a></code> script acts as a master controller, orchestrating the entire ingestion process in a single command, ideal for automation.</li>
+                            <li><strong>Idempotency and Reliability:</strong> The process is repeatable; Landing Tables track loaded files to avoid duplication and data corruption.</li>
+                        </ul>
+                    </div>
+                     <div id="storage-layer-overview" class="prose-headings mt-8 p-6 bg-white rounded-lg shadow-sm">
+                        <h3 class="text-xl font-bold text-sky-800">2. Storage Layer: The Stable Foundation</h3>
+                        <p>The <code><a href="./models/01_storage/" target="_blank" rel="noopener noreferrer">models/01_storage</a></code> directory implements the patterns from Chapters 10 and 11. It's the PDP's foundation, storing a perfect, immutable, and auditable history of the source data over time.</p>
+                        <ul class="list-disc pl-5 mt-4 space-y-2">
+                           <li><strong>The STG » HIST » VER Pattern:</strong> This is the cornerstone of the layer. Every source entity is consistently processed through this three-stage pipeline using PDP macros for uniformity and reliability.</li>
+                           <li><strong>Hashing and Historization:</strong> The use of <code>pdp_hash</code> to create business key hashes (<code>_HKEY</code>) and change-detection hashes (<code>_HDIFF</code>) is the technical core, providing stable surrogate keys and a reliable mechanism for tracking changes.</li>
+                           <li><strong>Handling Embedded Entities:</strong> The <code><a href="./models/01_storage/interactive_brokers/security/" target="_blank" rel="noopener noreferrer">security</a></code> subfolder is a standout example of creating a complete historical picture of an entity even when its attributes are fragmented across multiple source files.</li>
+                           <li><strong>dbt Sources:</strong> The layer declares landing tables as dbt sources (in <code><a href="./models/01_storage/interactive_brokers/source_interactive_brokers.yml" target="_blank" rel="noopener noreferrer">source_interactive_brokers.yml</a></code>) to manage the dependency graph from the start.</li>
+                        </ul>
+                    </div>
+                    <div id="refined-layer-overview" class="prose-headings mt-8 p-6 bg-white rounded-lg shadow-sm">
+                        <h3 class="text-xl font-bold text-teal-800">3. Refined Layer: Creating Business-Centric Information</h3>
+                        <p>The <code><a href="./models/02_refined/" target="_blank" rel="noopener noreferrer">models/02_refined</a></code> layer, detailed in Chapters 12 and 13, transforms the source-aligned data into clean, integrated, and reusable business concepts, applying business logic to turn data into valuable information.</p>
+                        <ul class="list-disc pl-5 mt-4 space-y-2">
+                            <li><strong>Master Data Creation:</strong> The <code><a href="./models/02_refined/interactive_brokers/securities/REFH_IB_SECURITIES.sql" target="_blank" rel="noopener noreferrer">REFH_IB_SECURITIES</a></code> model serves as the "golden record" for securities, integrating multiple sources into a single, authoritative, and versioned history.</li>
+                            <li><strong>Event-Sourcing with a Recursive CTE:</strong> The <code><a href="./models/02_refined/interactive_brokers/positions_calculated/REFH_IB_POSITIONS_CALCULATED.sql" target="_blank" rel="noopener noreferrer">REFH_IB_POSITIONS_CALCULATED</a></code> model reconstructs a complete position history from a transaction log, demonstrating a powerful pattern for creating highly accurate and auditable records.</li>
+                            <li><strong>Time-Series Analysis:</strong> The <code><a href="./models/02_refined/interactive_brokers/position_values/TS_IB_REPORTED_POSITIONS_DAILY_VALUES.sql" target="_blank" rel="noopener noreferrer">TS_IB_REPORTED_POSITIONS_DAILY_VALUES</a></code> model uses the <code>pragmatic_data.time_join</code> macro to perform a time-aware (ASOF) join, transforming sparse data into a dense, analysis-ready time series.</li>
+                            <li><strong>Master Date Dimension:</strong> The <code><a href="./models/02_refined/master_data/MDD_DATE_CALENDAR.sql" target="_blank" rel="noopener noreferrer">MDD_DATE_CALENDAR</a></code> model uses <code>dbt_utils.date_spine</code> to create a standard date dimension, a best practice for any analytical modeling.</li>
+                        </ul>
+                    </div>
+                    <div id="delivery-layer-overview" class="prose-headings mt-8 p-6 bg-white rounded-lg shadow-sm">
+                        <h3 class="text-xl font-bold text-indigo-800">4. Delivery Layer</h3>
+                        <p>This is the final layer, designed to serve data consumers. As described in Chapters 14 and 15, its models are purpose-built for specific use cases like BI dashboards or application data sources.</p>
+                         <ul class="list-disc pl-5 mt-4 space-y-2">
+                            <li><strong>Dimensional Modeling:</strong> The primary output is the <code>portfolio_analysis</code> data mart, which includes conformed dimensions (<code><a href="./models/03_delivery/marts/portfolio_analysis/DIM_DATE.sql" target="_blank" rel="noopener noreferrer">DIM_DATE</a></code>, <code><a href="./models/03_delivery/marts/portfolio_analysis/DIM_SECURITIES.sql" target="_blank" rel="noopener noreferrer">DIM_SECURITIES</a></code>) and fact tables (<code><a href="./models/03_delivery/marts/portfolio_analysis/FACT_POSITION_TRANSACTIONS.sql" target="_blank" rel="noopener noreferrer">FACT_POSITION_TRANSACTIONS</a></code>).</li>
+                            <li><strong>Denormalized Reporting Models:</strong> The project builds <code><a href="./models/03_delivery/marts/portfolio_analysis/RPT_POSITIONS_DAILY_VALUES.sql" target="_blank" rel="noopener noreferrer">RPT_POSITIONS_DAILY_VALUES</a></code>, a wide, pre-joined table optimized for performance and ease of use in BI tools.</li>
+                            <li><strong>Application-Specific Models:</strong> <code><a href="./models/03_delivery/apps/current_positions/RPT_POSITIONS_CURRENT_VALUES.sql" target="_blank" rel="noopener noreferrer">RPT_POSITIONS_CURRENT_VALUES</a></code> is a lean, specialized model designed to power a specific application, like the included <a href="./code_samples_by_chapter/chapter_15/" target="_blank" rel="noopener noreferrer">Streamlit app</a>.</li>
+                            <li><strong>Governance and Trust:</strong> Models in this layer use dbt Contracts to enforce data types and constraints, ensuring data products are reliable and trustworthy.</li>
+                        </ul>
+                    </div>
+                </section>
+
+                <section id="detailed-analysis" class="mt-12">
+                     <h2 class="text-3xl font-bold text-amber-900 border-b-2 border-amber-200 pb-2">Detailed Model Analysis</h2>
+                    
+                    <div id="ingestion-layer-detail" class="prose-headings mt-8 p-6 bg-white rounded-lg shadow-sm">
+                        <h3 class="text-2xl font-semibold text-amber-800">Ingestion Layer (<code><a href="./ingestion/" target="_blank" rel="noopener noreferrer">ingestion/</a></code>)</h3>
+                        <p>This folder contains the operational macros to set up and run the data loading process. They are executed via <code>dbt run-operation</code>.</p>
+                        
+                        <div class="mt-6 border-t pt-4">
+                            <h4 class="font-semibold"><code><a href="./ingestion/land_interactive_brokers/setup_interactive_brokers.sql" target="_blank" rel="noopener noreferrer">setup_interactive_brokers.sql</a></code></h4>
+                            <p><strong>Purpose:</strong> To create all necessary Snowflake infrastructure (stages, file formats, landing tables) for ingesting the Interactive Brokers CSV files.</p>
+                            <p><strong>Code Analysis:</strong> This script uses the <code>pragmatic_data.inout_setup_sql</code> macro, which reads a simple YAML configuration to define the landing zone's database, schema, file format, and stage. This centralizes the entire setup in a single, readable configuration file.</p>
+                        </div>
+                        <div class="mt-6 border-t pt-4">
+                            <h4 class="font-semibold"><code><a href="./ingestion/land_interactive_brokers/" target="_blank" rel="noopener noreferrer">load_*.sql</a></code> scripts</h4>
+                             <p><strong>Purpose:</strong> To execute the ingestion process for specific data entities (e.g., <code>load_IB_Trades.sql</code>).</p>
+                             <p><strong>Code Analysis:</strong> These scripts use the <code>pragmatic_data.run_CSV_ingestion</code> macro. This macro reads the table-specific YAML configuration and executes the <code>COPY INTO</code> commands to load new data from the configured Snowflake stage into the corresponding landing table.</p>
+                        </div>
+                         <div class="mt-6 border-t pt-4">
+                            <h4 class="font-semibold"><code><a href="./ingestion/land_interactive_brokers/load_all_IB.sql" target="_blank" rel="noopener noreferrer">load_all_IB.sql</a></code></h4>
+                             <p><strong>Purpose:</strong> A convenient, all-in-one macro to run ingestion for all data types in the correct sequence.</p>
+                             <p><strong>Code Analysis:</strong> A wrapper macro that contains a series of <code>{% do load_IB_...() %}</code> calls, executing each individual ingestion macro. This is the typical entry point for a full source ingestion.</p>
+                        </div>
+                    </div>
+
+                    <div id="storage-layer-detail" class="prose-headings mt-8 p-6 bg-white rounded-lg shadow-sm">
+                        <h3 class="text-2xl font-semibold text-sky-800">Storage Layer (<code><a href="./models/01_storage/" target="_blank" rel="noopener noreferrer">models/01_storage/</a></code>)</h3>
+                        <p>This layer stores a complete history of the ingested data using the <code>STG -> HIST -> VER</code> pattern.</p>
+
+                        <div class="mt-6 p-4 border rounded-md">
+                            <div class="text-center font-medium text-gray-700">The STG » HIST » VER Pattern</div>
+                             <div class="mt-4 flex flex-col md:flex-row justify-between items-center space-y-2 md:space-y-0 md:space-x-2">
+                                <div class="flex-1 text-center p-3 bg-gray-100 rounded">STG (Staging)</div>
+                                <div class="text-gray-400"><i class="fas fa-arrow-right"></i></div>
+                                <div class="flex-1 text-center p-3 bg-gray-100 rounded">HIST (History)</div>
+                                <div class="text-gray-400"><i class="fas fa-arrow-right"></i></div>
+                                <div class="flex-1 text-center p-3 bg-gray-100 rounded">VER (Versioned)</div>
+                            </div>
+                        </div>
+                        
+                        <div class="mt-6 border-t pt-4">
+                            <h4 class="font-semibold"><code><a href="./models/01_storage/interactive_brokers/cash_transactions/" target="_blank" rel="noopener noreferrer">interactive_brokers/cash_transactions/</a></code></h4>
+                            <p>This directory processes financial transactions like dividends and interest. It's a classic example of the core storage pattern.</p>
+                            <ul class="mt-2 space-y-1 text-sm">
+                                <li><strong><code><a href="./models/01_storage/interactive_brokers/cash_transactions/STG_IB_CASH_TRANSACTIONS.sql" target="_blank" rel="noopener noreferrer">STG_IB_CASH_TRANSACTIONS.sql</a></code>:</strong> Cleans and prepares raw data, adding metadata like business keys (<code>hk</code>) and change-detection hashes (<code>rh</code>) using the <code>pragmatic_data.stage</code> macro.</li>
+                                <li><strong><code><a href="./models/01_storage/interactive_brokers/cash_transactions/HIST_IB_CASH_TRANSACTIONS.sql" target="_blank" rel="noopener noreferrer">HIST_IB_CASH_TRANSACTIONS.sql</a></code>:</strong> Incrementally builds an append-only history of all transactions using the <code>pragmatic_data.save_history</code> macro.</li>
+                                <li><strong><code><a href="./models/01_storage/interactive_brokers/cash_transactions/VER_IB_CASH_TRANSACTIONS.sql" target="_blank" rel="noopener noreferrer">VER_IB_CASH_TRANSACTIONS.sql</a></code>:</strong> Provides a simple view of the most recent version of each transaction using the <code>pragmatic_data.current_from_history</code> macro.</li>
+                            </ul>
+                        </div>
+                        
+                         <div class="mt-6 border-t pt-4">
+                            <h4 class="font-semibold"><code><a href="./models/01_storage/interactive_brokers/security/" target="_blank" rel="noopener noreferrer">interactive_brokers/security/</a></code></h4>
+                             <p>This directory demonstrates a more advanced use case: creating a unified entity from information embedded across multiple source files (trades, positions, etc.). Each source's security data is processed through its own <code>STG -> HIST -> VER</code> pipeline before being merged in the Refined Layer.</p>
+                        </div>
+
+                    </div>
+                    
+                    <div id="refined-layer-detail" class="prose-headings mt-8 p-6 bg-white rounded-lg shadow-sm">
+                        <h3 class="text-2xl font-semibold text-teal-800">Refined Layer (<code><a href="./models/02_refined/" target="_blank" rel="noopener noreferrer">models/02_refined/</a></code>)</h3>
+                        <p>This layer transforms the technical storage models into valuable, integrated business concepts.</p>
+                        
+                         <div class="mt-6 border-t pt-4">
+                            <h4 class="font-semibold"><code><a href="./models/02_refined/interactive_brokers/securities/" target="_blank" rel="noopener noreferrer">interactive_brokers/securities/</a></code></h4>
+                            <ul class="mt-2 space-y-1 text-sm">
+                                <li><strong><code><a href="./models/02_refined/interactive_brokers/securities/MHIST_IB_SECURITIES.sql" target="_blank" rel="noopener noreferrer">MHIST_IB_SECURITIES.sql</a></code>:</strong> Creates a "merged history" by unioning the <code>VER</code> security models from the Storage layer and applying the <code>pragmatic_data.save_history_with_multiple_versions</code> macro to handle records from different sources on the same day.</li>
+                                <li><strong><code><a href="./models/02_refined/interactive_brokers/securities/REFH_IB_SECURITIES.sql" target="_blank" rel="noopener noreferrer">REFH_IB_SECURITIES.sql</a></code>:</strong> Builds the final, refined history of securities. It uses <code>pragmatic_data.versions_from_history_with_multiple_versions</code> to create a clean, point-in-time correct history of each security, making it the "golden record".</li>
+                            </ul>
+                        </div>
+                        <div class="mt-6 border-t pt-4">
+                            <h4 class="font-semibold"><code><a href="./models/02_refined/interactive_brokers/positions_calculated/" target="_blank" rel="noopener noreferrer">interactive_brokers/positions_calculated/</a></code></h4>
+                            <ul class="mt-2 space-y-1 text-sm">
+                                <li><strong><code><a href="./models/02_refined/interactive_brokers/positions_calculated/REF_IB_POSITIONS_TRANSACTIONS.sql" target="_blank" rel="noopener noreferrer">REF_IB_POSITIONS_TRANSACTIONS.sql</a></code>:</strong> Creates a unified stream of all transactions affecting position quantities (buys, sells, transfers, corporate actions).</li>
+                                <li><strong><code><a href="./models/02_refined/interactive_brokers/positions_calculated/REFH_IB_POSITIONS_CALCULATED.sql" target="_blank" rel="noopener noreferrer">REFH_IB_POSITIONS_CALCULATED.sql</a></code>:</strong> The core of the business logic. It uses a recursive CTE to process the transaction stream from the model above, reconstructing a complete, event-sourced position history from scratch.</li>
+                            </ul>
+                        </div>
+                        <div class="mt-6 border-t pt-4">
+                            <h4 class="font-semibold"><code><a href="./models/02_refined/interactive_brokers/position_values/" target="_blank" rel="noopener noreferrer">interactive_brokers/position_values/</a></code></h4>
+                             <ul class="mt-2 space-y-1 text-sm">
+                                <li><strong><code><a href="./models/02_refined/interactive_brokers/position_values/TS_IB_REPORTED_POSITIONS_DAILY_VALUES.sql" target="_blank" rel="noopener noreferrer">TS_IB_REPORTED_POSITIONS_DAILY_VALUES.sql</a></code>:</strong> Enriches reported position values with security and position attributes at the correct point in time. It uses the <code>pragmatic_data.time_join</code> macro to perform a time-aware (ASOF) join, creating a sparse time-series with data only on days when values were reported.</li>
+                            </ul>
+                        </div>
+                        <div class="mt-6 border-t pt-4">
+                            <h4 class="font-semibold"><code><a href="./models/02_refined/interactive_brokers/dividends/" target="_blank" rel="noopener noreferrer">interactive_brokers/dividends/</a></code></h4>
+                             <ul class="mt-2 space-y-1 text-sm">
+                                <li><strong><code><a href="./models/02_refined/interactive_brokers/dividends/REFH_IB_DIVIDENDS.sql" target="_blank" rel="noopener noreferrer">REFH_IB_DIVIDENDS.sql</a></code>:</strong> Creates a refined history of dividend payments by filtering the main cash transaction log for dividend-related descriptions.</li>
+                                <li><strong><code><a href="./models/02_refined/interactive_brokers/dividends/AGG_IB_DIVIDENDS.sql" target="_blank" rel="noopener noreferrer">AGG_IB_DIVIDENDS.sql</a></code>:</strong> Aggregates the filtered dividend history by security, date, and currency, preparing it for use in a fact table by summarizing dividend events.</li>
+                            </ul>
+                        </div>
+                        <div class="mt-6 border-t pt-4">
+                            <h4 class="font-semibold"><code><a href="./models/02_refined/interactive_brokers/portfolios/" target="_blank" rel="noopener noreferrer">interactive_brokers/portfolios/</a></code></h4>
+                             <ul class="mt-2 space-y-1 text-sm">
+                                <li><strong><code><a href="./models/02_refined/interactive_brokers/portfolios/REF_IB_PORTFOLIOS.sql" target="_blank" rel="noopener noreferrer">REF_IB_PORTFOLIOS.sql</a></code>:</strong> Creates a master list of all unique portfolios (accounts) by scanning multiple <code>VER_</code> tables and creating a distinct list of `PORTFOLIO_HKEY`s. This serves as the source for the portfolio dimension.</li>
+                            </ul>
+                        </div>
+                         <div class="mt-6 border-t pt-4">
+                            <h4 class="font-semibold"><code><a href="./models/02_refined/interactive_brokers/positions_reported/" target="_blank" rel="noopener noreferrer">interactive_brokers/positions_reported/</a></code></h4>
+                             <ul class="mt-2 space-y-1 text-sm">
+                                <li><strong><code><a href="./models/02_refined/interactive_brokers/positions_reported/REFH_IB_POSITIONS_REPORTED.sql" target="_blank" rel="noopener noreferrer">REFH_IB_POSITIONS_REPORTED.sql</a></code>:</strong> Creates a refined historical view of positions as reported by the source system. It's crucial for reconciliation against the calculated position history to ensure data quality.</li>
+                            </ul>
+                        </div>
+                        <div class="mt-6 border-t pt-4">
+                             <h4 class="font-semibold"><code><a href="./models/02_refined/master_data/" target="_blank" rel="noopener noreferrer">master_data/</a></code></h4>
+                             <ul class="mt-2 space-y-1 text-sm">
+                                <li><strong><code><a href="./models/02_refined/master_data/MDD_DATE_CALENDAR.sql" target="_blank" rel="noopener noreferrer">MDD_DATE_CALENDAR.sql</a></code>:</strong> A canonical Master Date Dimension. It uses <code>dbt_utils.date_spine</code> to generate a complete calendar table, which is then enriched with attributes like year, month, and day of the week for analytical use.</li>
+                            </ul>
+                        </div>
+                    </div>
+                    
+                     <div id="delivery-layer-detail" class="prose-headings mt-8 p-6 bg-white rounded-lg shadow-sm">
+                        <h3 class="text-2xl font-semibold text-indigo-800">Delivery Layer (<code><a href="./models/03_delivery/" target="_blank" rel="noopener noreferrer">models/03_delivery/</a></code>)</h3>
+                        <p>This layer creates the final data products for end-users, primarily in the <code><a href="./models/03_delivery/marts/portfolio_analysis/" target="_blank" rel="noopener noreferrer">marts/portfolio_analysis/</a></code> directory.</p>
+                        
+                         <div class="mt-6 border-t pt-4">
+                            <h4 class="font-semibold">Dimensions</h4>
+                             <ul class="mt-2 space-y-1 text-sm">
+                                <li><strong><code><a href="./models/03_delivery/marts/portfolio_analysis/DIM_DATE.sql" target="_blank" rel="noopener noreferrer">DIM_DATE.sql</a></code>:</strong> A standard date dimension, exposing the <code>MDD_DATE_CALENDAR</code> model for easy use.</li>
+                                <li><strong><code><a href="./models/03_delivery/marts/portfolio_analysis/SCD_SECURITIES.sql" target="_blank" rel="noopener noreferrer">SCD_SECURITIES.sql</a></code> & <code><a href="./models/03_delivery/marts/portfolio_analysis/DIM_SECURITIES.sql" target="_blank" rel="noopener noreferrer">DIM_SECURITIES.sql</a></code>:</strong> These models create a Type 2 Slowly Changing Dimension to track changes to security attributes over time. <code>SCD_SECURITIES</code> uses the <code>pragmatic_data.self_completing_dimension</code> macro to build a dynamic dimension from the refined history, while <code>DIM_SECURITIES</code> provides a simple view of only current records.</li>
+                                <li><strong><code><a href="./models/03_delivery/marts/portfolio_analysis/DIM_PORTFOLIOS.sql" target="_blank" rel="noopener noreferrer">DIM_PORTFOLIOS.sql</a></code>:</strong> A simple dimension created from the refined list of portfolios.</li>
+                            </ul>
+                        </div>
+                        <div class="mt-6 border-t pt-4">
+                            <h4 class="font-semibold">Facts & Reporting</h4>
+                            <ul class="mt-2 space-y-1 text-sm">
+                                <li><strong><code><a href="./models/03_delivery/marts/portfolio_analysis/FACT_POSITION_TRANSACTIONS.sql" target="_blank" rel="noopener noreferrer">FACT_POSITION_TRANSACTIONS.sql</a></code>:</strong> A fact table containing all position-changing transactions, linked to the conformed dimensions via surrogate keys.</li>
+                                <li><strong><code><a href="./models/03_delivery/marts/portfolio_analysis/FACT_DIVIDENDS.sql" target="_blank" rel="noopener noreferrer">FACT_DIVIDENDS.sql</a></code>:</strong> A fact table for dividend events.</li>
+                                 <li><strong><code><a href="./models/03_delivery/marts/portfolio_analysis/RPT_POSITIONS_DAILY_VALUES.sql" target="_blank" rel="noopener noreferrer">RPT_POSITIONS_DAILY_VALUES.sql</a></code>:</strong> A wide, denormalized reporting model optimized for BI tools. It joins the sparse time-series data with the date dimension to create a dense daily history of position values, ready for easy analysis.</li>
+                            </ul>
+                        </div>
+                         <div class="mt-6 border-t pt-4">
+                            <h4 class="font-semibold">Application Models (<code><a href="./models/03_delivery/apps/" target="_blank" rel="noopener noreferrer">apps/</a></code>)</h4>
+                             <ul class="mt-2 space-y-1 text-sm">
+                                <li><strong><code><a href="./models/03_delivery/apps/current_positions/RPT_POSITIONS_CURRENT_VALUES.sql" target="_blank" rel="noopener noreferrer">RPT_POSITIONS_CURRENT_VALUES.sql</a></code>:</strong> A lean, specialized model that provides only the most recent information for each position, designed to efficiently power a front-end application.</li>
+                            </ul>
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </main>
+    </div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const sections = document.querySelectorAll('main section, main div[id]');
+        const navLinks = document.querySelectorAll('.nav-link');
+        const menuToggle = document.getElementById('menu-toggle');
+        const mobileNav = document.getElementById('mobile-nav');
+
+        const observerOptions = {
+            root: null,
+            rootMargin: '-80px 0px -50% 0px',
+            threshold: 0
+        };
+
+        const observer = new IntersectionObserver((entries, obs) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const id = entry.target.getAttribute('id');
+                    navLinks.forEach(link => {
+                        link.classList.remove('active');
+                        if (link.getAttribute('href') === `#${id}`) {
+                            link.classList.add('active');
+                        }
+                    });
+                }
+            });
+        }, observerOptions);
+
+        sections.forEach(section => {
+            observer.observe(section);
+        });
+        
+        menuToggle.addEventListener('click', () => {
+            mobileNav.classList.toggle('-translate-x-full');
+        });
+
+        navLinks.forEach(link => {
+            link.addEventListener('click', () => {
+                if (!mobileNav.classList.contains('-translate-x-full')) {
+                    mobileNav.classList.add('-translate-x-full');
+                }
+            });
+        });
+    });
+</script>
+
+</body>
+</html>
+
