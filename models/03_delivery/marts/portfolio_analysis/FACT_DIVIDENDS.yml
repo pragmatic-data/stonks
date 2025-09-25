@@ -8,7 +8,8 @@ models:
 
     Each row groups all different types of payment, taxes and costs for a single payment (settlement date),
     including fixes and restatements arrived later at any time.
-    
+  config:
+    contract: {enforced: true}
   data_tests:
     - dbt_utils.unique_combination_of_columns:
         combination_of_columns:
@@ -21,26 +22,22 @@ models:
           - LISTING_EXCHANGE
           - SECURITY_CODE
           - DIVIDEND_SETTLEMENT_DATE
-
     - dbt_utils.expression_is_true: # precise, but works only for decimal number
         expression: NET_CASH_RECIVED_IN_FX + TAX_PAID_IN_FX + COSTS_PAID_IN_FX = GROSS_DIVIDEND_RECIVED_IN_FX
-
     - dbt_utils.expression_is_true: # less pprecise, but works also for floating point number
         expression: "abs(NET_CASH_RECIVED_IN_FX + TAX_PAID_IN_FX + COSTS_PAID_IN_FX - GROSS_DIVIDEND_RECIVED_IN_FX) < 0.01"
-
-
   columns:
   - name: DIVIDEND_HKEY
     description: PK. A surrogate hash key built on the columns of the business key.
+    data_type: binary
     data_tests:
       - unique
       - not_null
-
   - name: dividend_settlement_date
     description: The date when the dividend is settled.
+    data_type: date
     data_tests:
       - not_null
-
   - name: NET_CASH_RECIVED_IN_FX
     description: |
       The net monetary amount settled on a certain date, in the original payment currency.
@@ -48,88 +45,97 @@ models:
 
       In general it should be the net dividend paid on the date, but on some dates there are just adjustments 
       (as the settlement dates are not properly aligned with the original dividend payment).
+    data_type: number
     data_tests:
       - not_null
-
   - name: currency_primary
     description: The original payment currency used in all the aggregated transactions.
+    data_type: text
     data_tests:
       - not_null
-
   - name: GROSS_DIVIDEND_RECIVED_IN_FX
     description: |
       The Gross dividend amount received on the date, in the original payment currency. 
       Positive amounts mean cash received in the account, negative cash paid out.
       It can be zero in dates when there are just tax or cost adjustments.
+    data_type: number
     data_tests:
       - not_null
-
   - name: TAX_PAID_IN_FX
     description: |
       The tax amount paid on the date, in the original payment currency.
       Positive amounts mean cash paid out of the account, negative cash received (from adjustments).
+    data_type: number
     data_tests:
       - not_null
-
   - name: COSTS_PAID_IN_FX
     description: |
       The other costs paid on the date, usually ADR costs, in the original payment currency.
       Positive amounts mean cash paid out of the account, negative cash received (from adjustments).
+    data_type: number
     data_tests:
       - not_null
-
   - name: avg_fx_rate_to_base
     description: The average foreign exchange rate to the base currency across the aggregated transactions.
+    data_type: number
     data_tests:
       - not_null
-
   - name: gross_dividend_recived_in_base
     description: The total dividend received in the base currency of the portfolio.
+    data_type: number
   - name: tax_paid_in_base
     description: The tax paid on the dividend in the base currency of the portfolio.
+    data_type: number
   - name: costs_paid_in_base
     description: The costs associated with the dividend in the base currency of the portfolio.
+    data_type: number
   - name: net_cash_recived_in_base
     description: The net cash received from the dividend in the base currency of the portfolio.
-
+    data_type: number
   - name: broker_code
     description: The code representing the broker involved in the transaction.
+    data_type: text
     data_tests:
       - not_null
-
   - name: client_account_code
     description: The code identifying the client's account.
+    data_type: text
     data_tests:
       - not_null
-
   - name: listing_exchange
     description: The exchange where the security is listed.
+    data_type: text
     data_tests:
       - not_null
-
   - name: security_code
     description: The code identifying the security.
+    data_type: text
     data_tests:
       - not_null
-
   - name: account_alias
     description: An alias for the client's account for easier reference.
+    data_type: text
   - name: security_symbol
     description: The symbol representing the security.
+    data_type: text
   - name: security_name
     description: The name of the security.
-
+    data_type: text
   - name: month
     description: The month of the dividend transaction.
+    data_type: number
   - name: quarter
     description: The quarter of the dividend transaction.
+    data_type: text
   - name: year
     description: The year of the dividend transaction.
+    data_type: number
   - name: year_quarter
     description: The year and quarter of the dividend transaction.
-
+    data_type: text
   - name: portfolio_hkey
     description: FK. A unique hash key for the portfolio record.
+    data_type: binary
     data_tests:
       - not_null
       - relationships:
@@ -137,6 +143,7 @@ models:
           to: ref('DIM_PORTFOLIOS')
   - name: position_hkey
     description: FK. A unique hash key for the position record.
+    data_type: binary
     data_tests:
       - not_null
       - relationships:
@@ -144,6 +151,7 @@ models:
           to: ref('RPT_POSITIONS_DAILY_VALUES')
   - name: security_hkey
     description: FK. A unique hash key for the security record.
+    data_type: binary
     data_tests:
       - not_null
       - relationships:
@@ -151,11 +159,12 @@ models:
           to: ref('DIM_SECURITIES')
   - name: security_scd_hkey
     description: A hash key for the slowly changing dimension of the security.
+    data_type: binary
     data_tests:
       - not_null
       - relationships:
           field: security_scd_hkey
           to: ref('SCD_SECURITIES')
-
   - name: position_scd_hkey
     description: A hash key for the slowly changing dimension of the position.
+    data_type: binary

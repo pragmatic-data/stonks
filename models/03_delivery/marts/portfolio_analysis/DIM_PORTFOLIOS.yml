@@ -6,6 +6,8 @@ models:
       This model provides a comprehensive view of portfolios, integrating base portfolio information 
       with daily value statistics and position activity. It helps in understanding the current and 
       historical status of portfolios, including their activity levels and financial metrics.
+    config:
+      contract: {enforced: true}
     columns:
       - name: portfolio_hkey
         description: the unique key for a portfolio
@@ -13,53 +15,70 @@ models:
         data_tests:
           - not_null
           - unique
-
       - name: broker_code
         description: The code of the broker holding the portfolio
-        data_type: string
+        data_type: text
         data_tests:
           - not_null
       - name: broker_name
         description: The name of the broker
-        data_type: string
+        data_type: text
         data_tests:
           - not_null
       - name: client_account_code
         description: The code of the account associated with the portfolio.
-        data_type: string
+        data_type: text
         data_tests:
           - not_null
       - name: account_alias
         description: The alias of the account associated with the portfolio.
-        data_type: string
+        data_type: text
         data_tests:
           - not_null
-
       - name: positions_in_portfolio
         description: The number of distinct positions within the portfolio.
+        data_type: number
         data_tests:
           - not_null
       - name: first_activity_date
         description: The date of the first recorded activity in the portfolio.
+        data_type: timestamp_ntz
         data_tests:
           - not_null
       - name: last_position_change
         description: The date of the most recent position change in the portfolio.
+        data_type: timestamp_ntz
         data_tests:
           - not_null
       - name: is_active_last_30_days
         description: Indicates if the portfolio has been active in the last 30 days.
+        data_type: boolean
         data_tests:
           - not_null
       - name: is_active_last_360_days
         description: Indicates if the portfolio has been active in the last 360 days.
+        data_type: boolean
         data_tests:
           - not_null
       - name: portfolio_value
         description: The total value of the portfolio, calculated as the sum of position values.
+        data_type: number
         data_tests:
           - not_null
       - name: portfolio_cost_basis
         description: The total cost basis of the portfolio, calculated as the sum of cost basis money.
+        data_type: number
         data_tests:
           - not_null
+      - name: record_source
+        description: The source system or process that generated this record.
+        data_type: text
+      - name: effectivity_date
+        description: The date from which this record is effective.
+        data_type: timestamp_ntz
+      - name: ingestion_ts_utc
+        description: The UTC timestamp when the record was ingested into the landing layer.
+        data_type: timestamp_ntz
+      - name: hist_load_ts_utc
+        description: The UTC timestamp when the record was loaded into the historical storage layer.
+        data_type: timestamp_ntz
