@@ -4,12 +4,13 @@ Welcome to the sample project of the book presenting how to build the Pragmatic 
 
 ## Sample project overview and analysis 
 
-The [Sample_Project_Analysis](https://raw.githack.com/pragmatic-data/stonks/main/Sample_Project_Analysis.html) page 
-provides a good starting point to understand the Stonks project. It provides:
-- an introduction to the STONKS project
-- a primer on the layers of the project, including their features and goals.
+The [Sample Project Analysis page](https://raw.githack.com/pragmatic-data/stonks/main/Sample_Project_Analysis.html) 
+provides a good starting point to understand the Stonks project.  
+It provides:
+- An introduction to the STONKS project
+- An overview of the PDP layers, including their features and goals.
   The layer follow the standard of the Pragmatic Data Platform.
-- a detailed folder-by-folder and mode-by-model analysis for the contents of the project
+- A detailed folder-by-folder and mode-by-model analysis for the contents of the project
 
 ## Setting up the project
 
