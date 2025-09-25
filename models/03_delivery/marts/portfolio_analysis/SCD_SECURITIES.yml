@@ -4,97 +4,130 @@ models:
     providing a comprehensive view of security attributes and changes over time. 
     It is designed to support time based analysis of security-related events and transactions.
 
+  config:
+    contract: {enforced: true}
+
   columns:
   - name: security_scd_hkey
     description: Version PK. A unique binary key for the row's specific version of the security.
       This is the unique Key of this slowly changing dimension table.
+    data_type: binary
     data_tests:
       - unique
       - not_null
   - name: security_hkey
     description: Record PK. A unique binary key identifying each security.
       This is not a unique PK in this table, as a security can have multiple versions in a SCDT2 table.
+    data_type: binary
     data_tests:
       - not_null
 
   - name: listing_exchange
     description: BK. The exchange where the security is listed. Part of the HKEY.
+    data_type: text
     data_tests:
       - not_null
   - name: security_code
     description: BK. The code identifying the security. Part of the HKEY.
+    data_type: text
     data_tests:
       - not_null
   - name: security_symbol
     description: The symbol representing the security.
+    data_type: text
     data_tests:
       - not_null
   - name: security_name
     description: The name of the security.
+    data_type: text
     data_tests:
       - not_null
   - name: currency_primary
     description: The primary currency in which the security is traded.
+    data_type: text
     data_tests:
       - not_null
 
   - name: effectivity_date
     description: The date when this version of the security becomes effective.
+    data_type: timestamp_ntz
     data_tests:
       - not_null
   - name: report_date
     description: The date and time when the report was generated.
+    data_type: timestamp_ntz
     data_tests:
       - not_null
 
   - name: asset_class
     description: The class of the asset, such as equity or bond.
+    data_type: text
   - name: issuer
     description: The issuer of the security.
+    data_type: text
   - name: isin
     description: The International Securities Identification Number for the security.
+    data_type: text
   - name: cusip
     description: The Committee on Uniform Securities Identification Procedures number
       for the security.
+    data_type: text
   - name: conid
     description: The contract identifier for the security.
+    data_type: text
   - name: principal_adjust_factor
     description: The factor used to adjust the principal value of the security.
+    data_type: text
 
   - name: underlying_listing_exchange
     description: The exchange where the underlying security is listed.
+    data_type: text
   - name: underlying_security_code
     description: The code for the underlying security.
+    data_type: text
   - name: underlying_symbol
     description: The symbol representing the underlying security.
+    data_type: text
   - name: underlying_conid
     description: The contract identifier for the underlying security.
+    data_type: text
   - name: put_call
     description: Indicates whether the security is a put or a call option.
+    data_type: text
   - name: multiplier
     description: The multiplier applied to the security's value.
+    data_type: number
   - name: strike
     description: The strike price of the security.
+    data_type: number
   - name: expiry
     description: The expiration date of the security.
+    data_type: date
 
   - name: ingestion_ts_utc
     description: The timestamp in UTC when the data was ingested.
+    data_type: timestamp_ntz
     data_tests:
       - not_null
   - name: hist_load_ts_utc
     description: The timestamp in UTC when the historical data was loaded.
+    data_type: timestamp_ntz
     data_tests:
       - not_null
   - name: broker_code
     description: The code identifying the broker we got this security version.
+    data_type: text
   - name: record_source
     description: The source from which the record was extracted.
+    data_type: text
     data_tests:
       - not_null
   - name: valid_from
     description: The timestamp from which the security record is valid.
+    data_type: timestamp_ntz
   - name: valid_to
     description: The timestamp until which the security record is valid.
+    data_type: timestamp_ntz
   - name: is_current
     description: Indicates whether the security record is the current version.
+    data_type: boolean
