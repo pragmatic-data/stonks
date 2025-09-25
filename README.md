@@ -5,7 +5,7 @@ Welcome to the sample project of the book presenting how to build the Pragmatic 
 ## Sample project overview and analysis 
 
 The [Sample_Project_Analysis](https://raw.githack.com/pragmatic-data/stonks/main/Sample_Project_Analysis.html) page 
-provide a good starting point to understand the Stonks project. It provides:
+provides a good starting point to understand the Stonks project. It provides:
 - an introduction to the STONKS project
 - a primer on the layers of the project, including their features and goals.
   The layer follow the standard of the Pragmatic Data Platform.
