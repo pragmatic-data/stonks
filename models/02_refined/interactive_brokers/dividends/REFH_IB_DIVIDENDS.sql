@@ -50,7 +50,8 @@ base_table:
 joined_tables:
     {{ ref('REFH_IB_SECURITIES') }}: 
         time_column:    #-- The default time operator is '>=' that gives bt.DT >= tn.DT, that is Tn is active before BT 
-            EFFECTIVITY_DATE: SETTLE_DATE       #-- TN_col: BT_col
+            SETTLE_DATE: EFFECTIVITY_DATE           #-- BT_col: TN_col      -- Ver >=  0.4.12 
+            #-- EFFECTIVITY_DATE: SETTLE_DATE       #-- TN_col: BT_col      -- Ver <=  0.4.11 
         join_columns: 
             SECURITY_CODE: SECURITY_CODE
         columns:
