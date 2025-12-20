@@ -1,0 +1,13 @@
+models:
+  - name: model_to_be_changed_in_rc
+    latest_version: "{{ 1 if target.name in ['prod', 'qa'] else 2 }}"
+    versions:
+      - v: 1                 # old version — uses all top-level columns
+      - v: 2                 # new version
+        config:
+          enabled: "{{ false if target.name in ['prod', 'qa'] else true }}"
+
+      # - v: N
+      #   config:
+      #     alias: model_to_be_changed_in_rc   # keep v1 in its original database location
+      #   deprecation_date: "2025-12-31"

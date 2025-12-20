@@ -1,0 +1,1 @@
+select * from {{ ref('model_to_be_changed_in_rc') }}

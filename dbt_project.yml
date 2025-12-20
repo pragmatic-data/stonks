@@ -97,6 +97,11 @@ models:
           +materialized: table
           +schema: app_current_positions
 
+    release_candidate:
+      +enabled: "{{ false if target.name in ['prod', 'qa'] else true }}"
+      +group: release_candidate
+      +access: private
+
 seeds:
   stonks:
     +schema: seeds

@@ -1,0 +1,1 @@
+select 'NEW value' as new_col_name
