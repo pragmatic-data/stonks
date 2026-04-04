@@ -92,6 +92,10 @@ models:
         portfolio_analysis:
           +materialized: table
           +schema: mart_portfolio_analysis
+      apps:
+        current_positions:
+          +materialized: table
+          +schema: app_current_positions
 
 seeds:
   stonks:

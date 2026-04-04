@@ -2,6 +2,16 @@
 
 Welcome to the sample project of the book presenting how to build the Pragmatic Data Platform with dbt and Snowflake.
 
+## Sample project overview and analysis 
+
+The [Sample Project Analysis page](https://raw.githack.com/pragmatic-data/stonks/main/Sample_Project_Analysis.html) 
+provides a good starting point to understand the Stonks project.  
+It provides:
+- An introduction to the STONKS project
+- An overview of the PDP layers, including their features and goals.
+  The layer follow the standard of the Pragmatic Data Platform.
+- A detailed folder-by-folder and mode-by-model analysis for the contents of the project
+
 ## Setting up the project
 
 We split the process to get the full project setup in a few steps:

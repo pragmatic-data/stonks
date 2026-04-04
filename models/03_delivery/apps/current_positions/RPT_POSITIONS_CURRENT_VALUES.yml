@@ -1,0 +1,121 @@
+models:
+- name: rpt_positions_current_values
+  description: This model provides the current values of positions for accounts, including
+    market value, cost basis, and gains in both trading and base currencies. It is
+    used to assess the current financial status of positions, excluding closed positions,
+    as of the current date.
+
+  config:
+    contract: {enforced: true}
+
+  data_tests:
+    - dbt_utils.unique_combination_of_columns:      #-- Max one version per effectivity date
+        combination_of_columns: 
+          - client_account_code
+          - security_code
+          - listing_exchange
+
+  columns:
+  - name: account_alias
+    description: An alias for the account associated with the position.
+    data_type: string
+    data_tests:
+      - not_null
+  - name: security_symbol
+    description: The symbol representing the security.
+    data_type: string
+    data_tests:
+      - not_null
+  - name: security_name
+    description: The full name of the security.
+    data_type: string
+    data_tests:
+      - not_null
+  - name: asset_class
+    description: The class of the asset, such as equity or fixed income.
+    data_type: string
+  - name: position_value_date
+    description: The date when the position value was recorded.
+    data_type: date
+    data_tests:
+      - not_null
+  - name: quantity
+    description: The quantity of the security held in the position.
+    data_type: integer
+    data_tests:
+      - not_null
+  - name: side
+    description: Indicates whether the position is long or short.
+    data_type: string
+    data_tests:
+      - not_null
+  - name: trading_currency
+    description: The currency in which the security is traded.
+    data_type: string
+  - name: market_value_fx
+    description: The market value of the position in the trading currency.
+    data_type: number
+    data_tests:
+      - not_null
+  - name: cost_basis_fx
+    description: The cost basis of the position in the trading currency.
+    data_type: number
+    data_tests:
+      - not_null
+  - name: gain_fx
+    description: The gain of the position in the trading currency, calculated as market
+      value minus cost basis.
+    data_type: number
+    data_tests:
+      - not_null
+  - name: gain_pct_fx
+    description: The percentage gain of the position in the trading currency.
+    data_type: number
+  - name: fx_rate_to_base
+    description: The foreign exchange rate used to convert the trading currency to
+      the base currency.
+    data_type: number
+    data_tests:
+      - not_null
+  - name: market_value_base
+    description: The market value of the position in the base currency.
+    data_type: number
+    data_tests:
+      - not_null
+  - name: cost_basis_base
+    description: The cost basis of the position in the base currency.
+    data_type: number
+    data_tests:
+      - not_null
+  - name: gain_base
+    description: The gain of the position in the base currency.
+    data_type: number
+    data_tests:
+      - not_null
+  - name: market_price_fx
+    description: The market price per share in the trading currency.
+    data_type: number
+  - name: cost_basis_price_fx
+    description: The cost basis price per share in the trading currency.
+    data_type: number
+  - name: position_change_date
+    description: The date when the position was last changed.
+    data_type: date
+  - name: update_date
+    description: The date when the position data was last updated.
+    data_type: date
+  - name: client_account_code
+    description: The code identifying the client account.
+    data_type: string
+    data_tests:
+      - not_null
+  - name: listing_exchange
+    description: The exchange where the security is listed.
+    data_type: string
+    data_tests:
+      - not_null
+  - name: security_code
+    description: The code identifying the security.
+    data_type: string
+    data_tests:
+      - not_null

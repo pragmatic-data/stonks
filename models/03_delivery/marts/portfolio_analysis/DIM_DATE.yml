@@ -1,0 +1,140 @@
+version: 2
+
+models:
+  - name: DIM_DATE
+    description: |
+      Standard date dimension covering the full data range of the STONKS project (2021-2029).
+      Contains one row per calendar date with date attributes for filtering and grouping in BI tools.
+
+      Week semantics follow ISO 8601: weeks start on Monday and belong to the year containing
+      the Thursday of that week. The `day_of_week` column is normalized to Mon=1 … Sun=7
+      regardless of Snowflake session settings.
+
+      Documented in data mart [portfolio_analysis_mart](exposure.stonks.portfolio_analysis_mart).
+
+    config:
+      contract:
+        enforced: true
+      meta:
+        contains_pii: false
+        downstream_certified: true
+
+    columns:
+      - name: date
+        description: PK. The calendar date. One row per day.
+        data_type: date
+        data_tests:
+          - not_null
+          - unique
+
+      - name: day
+        description: Day of the month (1-31).
+        data_type: integer
+
+      - name: month
+        description: Month number (1-12).
+        data_type: integer
+
+      - name: quarter_number
+        description: Quarter number (1-4).
+        data_type: integer
+
+      - name: year
+        description: Calendar year (e.g. 2024).
+        data_type: integer
+
+      - name: day_name
+        description: |
+          Abbreviated day name as returned by Snowflake DAYNAME(): Mon, Tue, Wed, Thu, Fri, Sat, Sun.
+        data_type: text
+        data_tests:
+          - accepted_values:
+              values: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
+
+      - name: month_short_name
+        description: Abbreviated month name (Jan, Feb, ..., Dec).
+        data_type: text
+        data_tests:
+          - accepted_values:
+              values: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+
+      - name: month_name
+        description: Full month name (January, February, ..., December).
+        data_type: text
+
+      - name: quarter
+        description: Quarter label (Q1, Q2, Q3, Q4).
+        data_type: text
+        data_tests:
+          - accepted_values:
+              values: ['Q1', 'Q2', 'Q3', 'Q4']
+
+      - name: year_quarter
+        description: Year and quarter label in the format YYYY-Q# (e.g. 2024-Q3).
+        data_type: text
+
+      - name: day_of_week
+        description: |
+          Day of week normalized to ISO convention: Mon=1, Tue=2, Wed=3, Thu=4, Fri=5, Sat=6, Sun=7.
+          Consistent regardless of Snowflake WEEK_START session parameter.
+        data_type: integer
+        data_tests:
+          - not_null
+          - accepted_values:
+              values: [1, 2, 3, 4, 5, 6, 7]
+
+      - name: week_of_year
+        description: ISO week number within the year (1-53).
+        data_type: integer
+
+      - name: year_of_week
+        description: The ISO year to which the week belongs (may differ from calendar year for week 1 and week 52/53).
+        data_type: integer
+
+      - name: day_of_quarter
+        description: Day number within the quarter (1-92).
+        data_type: integer
+
+      - name: days_in_quarter
+        description: Total number of days in the quarter (useful for pro-rata calculations).
+        data_type: integer
+
+      - name: day_of_year
+        description: Day number within the year (1-366).
+        data_type: integer
+
+      - name: days_in_year
+        description: Total number of days in the year (365 or 366 for leap years).
+        data_type: integer
+
+      - name: first_day_of_week
+        description: The Monday of the ISO week containing this date.
+        data_type: date
+
+      - name: last_day_of_week
+        description: The Sunday of the ISO week containing this date.
+        data_type: date
+
+      - name: first_day_of_month
+        description: First day of the calendar month.
+        data_type: date
+
+      - name: last_day_of_month
+        description: Last day of the calendar month.
+        data_type: date
+
+      - name: first_day_of_quarter
+        description: First day of the calendar quarter.
+        data_type: date
+
+      - name: last_day_of_quarter
+        description: Last day of the calendar quarter.
+        data_type: date
+
+      - name: first_day_of_year
+        description: First day of the calendar year (January 1st).
+        data_type: date
+
+      - name: last_day_of_year
+        description: Last day of the calendar year (December 31st).
+        data_type: date
