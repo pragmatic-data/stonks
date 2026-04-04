@@ -2,22 +2,94 @@ version: 2
 
 exposures:
   - name: portfolio_analysis_mart
+    label: "STONKS - Portfolio Analysis Data Mart"
     type: dashboard
     maturity: high
     owner:
       name: Roberto Zagni
-      email: info@pragmatic-data.org
+      email: info@pragmatic-data.net
 
-    label: "STONKS - Portfolio Analysis Data Mart"
 
     description: |
-      #### Portfolio Analysis Data Mart
-      This data mart provides a comprehensive, user-friendly view of portfolio performance. It is structured using dimensional modeling principles to be intuitive for BI tools and analysts.
+      ## Overview
+      Data mart providing analytical access to the investment portfolio data sourced from Interactive Brokers.
 
-      **Key Data Products Included:**
-      - **Dimensions:** `DIM_PORTFOLIOS`, `DIM_SECURITIES` (current state), `SCD_SECURITIES` (full history), and `DIM_DATE`.
-      - **Facts:** `FACT_POSITION_TRANSACTIONS` (all position-altering events) and `FACT_DIVIDENDS` (all dividend payments).
-      - **Reports:** `RPT_POSITIONS_DAILY_VALUES` (a denormalized daily time series) and `RPT_POSITIONS_CURRENT_VALUES` (a snapshot of current holdings).
+      The mart is structured using dimensional modeling principles and exposes portfolio performance,
+      position history, transactions, and dividend payments. It is designed for both traditional BI
+      analysis (star schema queries) and AI-assisted querying via pre-joined report tables.
+
+      Data is loaded from Interactive Brokers activity exports; only current versions of dimensions
+      are exposed, but the full history of position and security changes is tracked in the storage layer.
+
+      ## Data freshness
+      Data is loaded from Interactive Brokers export files. 
+      You can find the project's latest build times on the top of this page, 
+      and source data load details in the [Interactive Brokers source](../resource/source/IB/) page.
+
+      ## Access
+      Data can be accessed via Snowsight UI:
+      - https://app.snowflake.com/<org>/<account>/data/databases/STONKS_PROD/schemas/STK_MART_PORTFOLIO_ANALYSIS
+
+      Access to the STONKS_PROD database requires appropriate Snowflake role assignment.
+      Use the STONKS_DEVELOPER role to be able to read all environments and eventually drop objects in DEV.
+      If you create anything in DEV, that you should leave to dbt, remember to use STONKS_DEV_RW role, so dbt can work with that.
+
+      ## Bus Matrix — Portfolio Analysis Data Mart
+
+      | Fact / Report                      | DIM_PORTFOLIOS | DIM_SECURITIES | SCD_SECURITIES | DIM_DATE |
+      | ---------------------------------- |:--------------:|:--------------:|:--------------:|:--------:|
+      | **FACT_POSITION_TRANSACTIONS**     | ✓              | ✓              |                | ✓        |
+      | **FACT_DIVIDENDS**                 | ✓              | ✓              | ✓              | ✓        |
+      | **RPT_POSITIONS_DAILY_VALUES** †   | ✓              | ✓              | ✓              | ✓        |
+
+      † RPT_POSITIONS_DAILY_VALUES is a pre-joined, denormalized report table — see note below.
+
+      ## Core Business Use Cases
+      * Analyzing portfolio composition and performance over time using `RPT_POSITIONS_DAILY_VALUES`
+      * Tracking all position-altering events (buys, sells, corporate actions) via `FACT_POSITION_TRANSACTIONS`
+      * Analyzing dividend income history by security, portfolio, or time period via `FACT_DIVIDENDS`
+      * Point-in-time security attribute analysis using `SCD_SECURITIES` (SCD Type 2)
+
+      ## Data Model & Grain
+
+      ### Dimensions
+      * **[`DIM_PORTFOLIOS`](model.stonks.DIM_PORTFOLIOS)** — One row per portfolio (broker + account).
+        Contains portfolio metadata and summary activity statistics.
+
+      * **[`DIM_SECURITIES`](model.stonks.DIM_SECURITIES)** — One row per security (current state only, Type 1).
+        Identified by `listing_exchange` + `security_code`.
+
+      * **[`SCD_SECURITIES`](model.stonks.SCD_SECURITIES)** — One row per version of each security (Type 2 SCD).
+        Use when you need point-in-time security attributes matched to historical transactions.
+
+      * **[`DIM_DATE`](model.stonks.DIM_DATE)** — Standard date dimension covering the full data range.
+
+      ### Facts
+      * **[`FACT_POSITION_TRANSACTIONS`](model.stonks.FACT_POSITION_TRANSACTIONS)** — All position-altering events.
+        The grain is one row per transaction (buy, sell, corporate action, transfer).
+        Links to `DIM_PORTFOLIOS`, `DIM_SECURITIES`, and `RPT_POSITIONS_DAILY_VALUES`.
+
+      * **[`FACT_DIVIDENDS`](model.stonks.FACT_DIVIDENDS)** — All dividend payments, aggregated per position and settlement date.
+        The grain is one row per position × settlement date.
+        Includes gross, net, tax, and cost amounts in both trading currency and base currency.
+        Links to `DIM_PORTFOLIOS`, `DIM_SECURITIES`, and `SCD_SECURITIES`.
+
+      ### Pre-joined Report Tables (AI-query friendly)
+      * **[`RPT_POSITIONS_DAILY_VALUES`](model.stonks.RPT_POSITIONS_DAILY_VALUES)** — Daily time series of all positions with valuations.
+        The grain is one row per position × calendar date.
+        This is a **denormalized, pre-joined table** that combines position data, security attributes,
+        valuations, and calendar dimensions in a single wide table. It is the recommended entry point for:
+        - BI tools and analysts who want a single table for portfolio analysis
+        - AI-assisted query generation (e.g. dbt Insights, Snowflake Cortex), where fewer joins
+          reduce the risk of cardinality errors and simplify generated SQL
+        Contains verified integrity constraints: `position_value = mark_price * quantity`
+        and `fifo_pnl_unrealized = position_value - cost_basis_money`.
+
+      ## Assumptions & Limitations
+      * **Source:** Data sourced exclusively from Interactive Brokers activity exports.
+      * **Currency:** All monetary amounts are available in both trading currency (FX) and base currency.
+      * **Current state only:** DIM tables reflect the current state; use SCD_SECURITIES for historical attribute lookups.
+      * **Timing:** Data freshness depends on the frequency of IB export file ingestion.
 
     depends_on:
       - ref('DIM_PORTFOLIOS')

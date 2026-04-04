@@ -2,12 +2,22 @@ version: 2
 models:
   - name: DIM_PORTFOLIOS
     description: |
-      The portfolios found in our facts.  
-      This model provides a comprehensive view of portfolios, integrating base portfolio information 
-      with daily value statistics and position activity. It helps in understanding the current and 
-      historical status of portfolios, including their activity levels and financial metrics.
+      Dimension table representing investment portfolios held at Interactive Brokers.
+      Contains one row per portfolio (broker + account), with portfolio metadata and 
+      summary activity statistics derived from position history.
+
+      This is a **Type 1 dimension** (current state only).  
+      History of the changes of the portfolio entity are not tracked; 
+      the history of positions in all portfolios is available in RPT_POSITIONS_DAILY_VALUES.
+
+      Documented in data mart [portfolio_analysis_mart](exposure.stonks.portfolio_analysis_mart).
     config:
       contract: {enforced: true}
+      meta:
+        contains_pii: false
+        downstream_certified: true
+
+
     columns:
       - name: portfolio_hkey
         description: the unique key for a portfolio
@@ -37,7 +47,7 @@ models:
           - not_null
       - name: positions_in_portfolio
         description: The number of distinct positions within the portfolio.
-        data_type: number
+        data_type: integer
         data_tests:
           - not_null
       - name: first_activity_date
@@ -62,12 +72,12 @@ models:
           - not_null
       - name: portfolio_value
         description: The total value of the portfolio, calculated as the sum of position values.
-        data_type: number
+        data_type: NUMBER(38,6)
         data_tests:
           - not_null
       - name: portfolio_cost_basis
         description: The total cost basis of the portfolio, calculated as the sum of cost basis money.
-        data_type: number
+        data_type: NUMBER(38,6)
         data_tests:
           - not_null
       - name: record_source
