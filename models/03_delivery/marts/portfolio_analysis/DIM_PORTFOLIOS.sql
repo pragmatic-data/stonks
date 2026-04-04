@@ -19,8 +19,8 @@ portfolio_base_dim as (
 , portfolio_daily_value_stats as (
     select
         portfolio_hkey
-        , round(sum(position_value), 2) as portfolio_value          #-- Not a great idea a metric in a DIM !!! See Ch.15 ;)
-        , round(sum(cost_basis_money), 2) as portfolio_cost_basis   #-- Not a great idea a metric in a DIM !!! See Ch.15 ;)
+        , round(sum(position_value), 2) as portfolio_value          -- Not a great idea a metric in a DIM !!! See Ch.15 ;)
+        , round(sum(cost_basis_money), 2) as portfolio_cost_basis   -- Not a great idea a metric in a DIM !!! See Ch.15 ;)
     from {{ ref('TS_IB_REPORTED_POSITIONS_DAILY_VALUES') }} as v
     where VALUE_IS_CURRENT and side != 'Closed'
     group by portfolio_hkey
