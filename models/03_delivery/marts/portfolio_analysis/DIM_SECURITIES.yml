@@ -108,10 +108,10 @@ models:
       data_type: text
     - name: multiplier
       description: The multiplier applied to the security's value.
-      data_type: number
+      data_type: NUMBER(38,6)
     - name: strike
       description: The strike price of the security.
-      data_type: number
+      data_type: NUMBER(38,6)
     - name: expiry
       description: The expiration date of the security.
       data_type: date
