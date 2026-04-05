@@ -7,8 +7,8 @@ sources:
     schema: LAND_IB
 
     freshness: 
-      warn_after: {count: 30, period: day}
-      error_after: {count: 90, period: day}   
+      warn_after: {count: 1200, period: day}
+      error_after: {count: 3650, period: day}   
     loaded_at_field: TRY_TO_TIMESTAMP(REPORTDATE)      # INGESTION_TS_UTC
 
     tables: 
